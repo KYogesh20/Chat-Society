@@ -17,6 +17,7 @@ const Server = ({ serverName }) => {
   const [channels, setChannels] = useState([]);
   const { serverInfo } = useContext(ServerContext);
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
+  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   // const { serverId } = useParams();
   const serverId = serverInfo.serverId;
   useEffect(() => {
@@ -26,13 +27,10 @@ const Server = ({ serverName }) => {
     try {
       const channelName = prompt("Enter channel name");
       if (channelName) {
-        const res = await axios.post(
-          "http://localhost:5000/channelapi/createchannel",
-          {
-            channelName,
-            serverId,
-          }
-        );
+        const res = await axios.post(`${backendURL}/channelapi/createchannel`, {
+          channelName,
+          serverId,
+        });
       }
       showChannels();
     } catch (error) {
@@ -42,7 +40,7 @@ const Server = ({ serverName }) => {
   const showChannels = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/channelapi/channels/${serverId}`
+        `${backendURL}/channelapi/channels/${serverId}`
       );
       setChannels(res.data);
     } catch (error) {
