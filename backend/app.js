@@ -23,7 +23,7 @@ const { sendMsg } = require("./controllers/MessageController.js");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const frontendURL = import.meta.env.FRONTEND_URL;
+const frontendURL = process.env.FRONTEND_URL;
 
 const io = new Server(server, {
   cors: {
