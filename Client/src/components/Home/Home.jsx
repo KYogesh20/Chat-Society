@@ -49,7 +49,7 @@ const Home = () => {
     console.log(`pageParam is: ${pageParam}`);
     console.log(`channelId is: ${channelId}`);
     const res = await fetch(
-      `https://chat-app-production-5e23.up.railway.app/msgapi/msgs/${channelId}?take=${pageParam}`
+      `${backendURL}/msgapi/msgs/${channelId}?take=${pageParam}`
     );
     // console.log(`response ka pradarshan: `);
     // console.log(res);
