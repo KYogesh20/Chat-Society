@@ -1,2 +1,3 @@
 import { io } from "socket.io-client";
-export const socket = io(process.env.VITE_APP_BACKEND_URL);
+import { env } from "node:process";
+export const socket = io(env.VITE_APP_BACKEND_URL);
