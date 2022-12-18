@@ -81,5 +81,5 @@ app.use(function (err, req, res, next) {
 //   console.log("Deleted!");
 // };
 // deletekarde();
-server.listen(5000);
+server.listen(process.env.PORT || 5000);
 module.exports = app;
