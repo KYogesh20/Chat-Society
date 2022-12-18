@@ -34,7 +34,7 @@ const Home = () => {
   const { channelId } = useParams();
   const [channelIdState, setChannelIdState] = useState(channelId);
   const chatRef = useRef(null);
-
+  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const navigate = useNavigate();
   onAuthStateChanged(auth, (currUser) => {
     if (currUser) {
@@ -49,7 +49,7 @@ const Home = () => {
     console.log(`pageParam is: ${pageParam}`);
     console.log(`channelId is: ${channelId}`);
     const res = await fetch(
-      `http://localhost:5000/msgapi/msgs/${channelId}?take=${pageParam}`
+      `https://chat-app-production-5e23.up.railway.app/msgapi/msgs/${channelId}?take=${pageParam}`
     );
     // console.log(`response ka pradarshan: `);
     // console.log(res);
@@ -62,7 +62,7 @@ const Home = () => {
   const fetchAllMsgs = async () => {
     setSliceCount(-15);
     setHasMore(true);
-    const res = await fetch(`http://localhost:5000/msgapi/msgs/${channelId}`);
+    const res = await fetch(`${backendURL}/msgapi/msgs/${channelId}`);
     const data = await res.json();
     localStorage.setItem("messages", JSON.stringify(data?.msgs));
     setDisplayMessages(data?.msgs.slice(-15));
@@ -86,9 +86,7 @@ const Home = () => {
     }
   };
   const fetchOneMessage = async (newChannelId) => {
-    const res = await fetch(
-      `http://localhost:5000/msgapi/msgs/${newChannelId}?take=1`
-    );
+    const res = await fetch(`${backendURL}/msgapi/msgs/${newChannelId}?take=1`);
     const data = await res.json();
     const allMsg = JSON.parse(localStorage.getItem("messages"));
     let newList = allMsg?.concat(data?.msgs);
@@ -186,7 +184,7 @@ const Home = () => {
 
   const showServers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/getserver");
+      const res = await axios.get(`${backendURL}/api/getserver`);
       // console.log("servers are ", res);
       setServers(res.data);
     } catch (error) {
@@ -199,7 +197,7 @@ const Home = () => {
       const serverName = prompt("Add the server name");
       if (serverName !== "") {
         const res = await axios.post(
-          "http://localhost:5000/api/createserver",
+          `${backendURL}/api/createserver`,
           JSON.stringify({
             Name: serverName,
           }),
