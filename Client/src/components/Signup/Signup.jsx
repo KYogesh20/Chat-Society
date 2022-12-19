@@ -75,8 +75,8 @@ const Signup = () => {
       const user = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(auth.currentUser, {
         displayName: username,
-        photoURL:
-          "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
+        // photoURL:
+        //   "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
       });
       console.log(user);
       toast.update(id, {
@@ -114,10 +114,10 @@ const Signup = () => {
     try {
       const provider = new GoogleAuthProvider();
       const userDetail = await signInWithPopup(auth, provider);
-      await updateProfile(auth.currentUser, {
-        photoURL:
-          "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
-      });
+      // await updateProfile(auth.currentUser, {
+      //   photoURL:
+      //     "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
+      // });
       console.log(userDetail.user);
       toast.update(id, {
         render: "Login successfull",

@@ -45,11 +45,11 @@ const Login = () => {
   const submitForm = async (e) => {
     e.preventDefault();
     const { email, password } = userDetails;
-    console.log(email, password);
+    // console.log(email, password);
     const id = toast.loading("Logging in...");
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log(user);
+      // console.log(user);
       toast.update(id, {
         render: "Login successful",
         type: "success",
@@ -80,11 +80,11 @@ const Login = () => {
     try {
       const provider = new GoogleAuthProvider();
       const userDetail = await signInWithPopup(auth, provider);
-      await updateProfile(auth.currentUser, {
-        photoURL:
-          "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
-      });
-      console.log(userDetail.user);
+      // await updateProfile(auth.currentUser, {
+      //   photoURL:
+      //     "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
+      // });
+      // console.log(userDetail.user);
       toast.update(id, {
         render: "Login successful",
         type: "success",

@@ -1,5 +1,7 @@
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import "./Home.css";
+import { FiUser } from "react-icons/fi";
+import { TfiHome } from "react-icons/tfi";
 import { signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
@@ -15,9 +17,10 @@ import Server from "../Server/Server";
 import axios from "axios";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
-import "tippy.js/animations/scale-extreme.css";
+import "tippy.js/animations/shift-away-subtle.css";
 import { socket } from "../../IO";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Modal from "../Modal/Modal";
 
 const Home = () => {
   // console.log(socket);
@@ -26,7 +29,8 @@ const Home = () => {
   const [sliceCount, setSliceCount] = useState(-15);
   const [hasMore, setHasMore] = useState(true);
   const [displayName, setDisplayName] = useState("");
-  const [photoURL, setPhotoURL] = useState("#");
+  // const [photoURL, setPhotoURL] = useState("#");
+  const [showModal, setShowModal] = useState(false);
   const { serverInfo, setServerInfo } = useContext(ServerContext);
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -39,7 +43,7 @@ const Home = () => {
   onAuthStateChanged(auth, (currUser) => {
     if (currUser) {
       setDisplayName(currUser.displayName);
-      setPhotoURL(currUser.photoURL);
+      // setPhotoURL(currUser.photoURL);
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
@@ -236,10 +240,27 @@ const Home = () => {
     animation: "scale-extreme",
   });
 
+  const showTippy = (serverId, serverName) => {
+    tippy(`#s${serverId}`, {
+      content: serverName,
+      animation: "shift-away-subtle",
+      placement: "right",
+    });
+  };
+
+  // Modal functions
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  useEffect(() => {
+    showServers();
+  }, [showModal]);
+
   return (
     <>
       <div className="container w-full">
-        <div className="server p-3 border-2 border-white flex flex-col justify-center items-center">
+        <div className="server p-3 border border-gray-600  flex flex-col justify-center items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-10 w-10 mb-5  text-blue-500 transition-all cursor-pointer"
@@ -260,14 +281,16 @@ const Home = () => {
                 +
               </button> */}
 
-            {servers?.map((server) => {
+            {servers?.map((server, ind) => {
               return (
                 <div
                   key={server.id}
-                  className="flex flex-col cursor-pointer p-1 hover:bg-slate-800 transition-all ease-in-out rounded-lg"
+                  className="flex flex-col cursor-pointer p-3  transition-all ease-in-out rounded-full bg-slate-800 my-1 hover:bg-slate-600"
                   onClick={() => setServer(server.id, server.Name)}
+                  onMouseOver={() => showTippy(ind, server?.Name)}
+                  id={"s" + ind}
                 >
-                  <p>{server.Name}</p>
+                  <TfiHome size={"1.5rem"} />
                 </div>
               );
             })}
@@ -277,7 +300,7 @@ const Home = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              onClick={addServer}
+              onClick={() => setShowModal(true)}
             >
               <path
                 strokeLinecap="round"
@@ -290,11 +313,14 @@ const Home = () => {
           <div className="mt-auto flex justify-center flex-col items-center">
             {/* <p className="text-xs">{displayName}</p> */}
             <button
-              onClick={() => navigate("/profile")}
-              className="hover:text-blue-500 transition-all"
+              onClick={logoutUser}
+              data-background={"green"}
+              className={`transition-all rounded-full p-3 bg-[#2d2d47]`}
+              id="profile"
             >
               <ToastContainer />
-              <img src={photoURL} alt="profile" id="profile" />
+              {/* <img src={photoURL} alt="profile" id="profile" /> */}
+              <FiUser size={"1.7rem"} />
             </button>
           </div>
         </div>
@@ -339,41 +365,50 @@ const Home = () => {
               {displayMessages?.map((messageData, i) => {
                 return (
                   <Fragment key={i}>
-                    <div
-                      className={`messageCard flex flex-col border-2 border-[#16161e] rounded-r-[0.9rem] rounded-bl-[0.9rem] ${
-                        displayName === messageData?.author
-                          ? "bg-[#27273e]"
-                          : "bg-[#1E1E30]"
-                      } mt-2 p-2 w-fit`}
-                      key={messageData?.id}
-                      id={i}
-                    >
-                      <div className="metaData text-[#c0caf5] pb-2 text-[0.7rem] flex justify-between items-center">
-                        <div className="text-[1rem]">
-                          {displayName === messageData?.author
-                            ? "You"
-                            : messageData?.author}
-                        </div>
-                        <div className="ml-3 mt-1 text-gray-300">
-                          {new Date().toLocaleDateString() ===
-                          new Date(messageData?.timestamp).toLocaleDateString()
-                            ? `Today at ${new Date(
-                                messageData?.timestamp
-                              ).toLocaleTimeString()}`
-                            : `${new Date(
-                                messageData?.timestamp
-                              ).toLocaleDateString()} 
+                    <div className="flex">
+                      <div
+                        className={`mt-2 bg-[#2d2d47] p-2 rounded-full h-fit`}
+                      >
+                        <FiUser size={"1.2rem"} />
+                      </div>
+                      <div
+                        className={`messageCard flex flex-col border-2 border-[#16161e] rounded-r-[0.9rem] rounded-bl-[0.9rem] ${
+                          displayName === messageData?.author
+                            ? "bg-[#27273e]"
+                            : "bg-[#1E1E30]"
+                        } mt-2 p-2 w-fit`}
+                        key={messageData?.id}
+                        id={i}
+                      >
+                        <div className="metaData text-[#c0caf5] pb-2 text-[0.7rem] flex justify-between items-center">
+                          <div className="text-[1rem]">
+                            {displayName === messageData?.author
+                              ? "You"
+                              : messageData?.author}
+                          </div>
+                          <div className="ml-3 mt-1 text-gray-300">
+                            {new Date().toLocaleDateString() ===
+                            new Date(
+                              messageData?.timestamp
+                            ).toLocaleDateString()
+                              ? `Today at ${new Date(
+                                  messageData?.timestamp
+                                ).toLocaleTimeString()}`
+                              : `${new Date(
+                                  messageData?.timestamp
+                                ).toLocaleDateString()} 
                           ${new Date(
                             messageData?.timestamp
                           ).toLocaleTimeString()}`}
+                          </div>
                         </div>
+                        <div className="message">{messageData?.message}</div>
                       </div>
-                      <div className="message">{messageData?.message}</div>
                     </div>
                   </Fragment>
                 );
               })}
-              <div className="pb-10" ref={chatRef} />
+              <div className="pb-3" ref={chatRef} />
             </InfiniteScroll>
           </div>
           <div className="chat-footer p-4 text-lg flex-grow ">
@@ -407,6 +442,7 @@ const Home = () => {
             </form>
           </div>
         </div>
+        <Modal showModal={showModal} closeModal={closeModal} variant="House" />
       </div>
     </>
   );
