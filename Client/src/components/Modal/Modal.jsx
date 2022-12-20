@@ -31,7 +31,7 @@ const Modal = ({ showModal, closeModal, variant }) => {
         );
         closeModal();
       } else if (housename && variant === "Room") {
-        await axios.post(`${backendURL}"/channelapi/createchannel"`, {
+        await axios.post(`${backendURL}/channelapi/createchannel`, {
           channelName: housename,
           serverId,
         });
