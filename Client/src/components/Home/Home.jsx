@@ -147,8 +147,13 @@ const Home = () => {
         message: currentMessage,
         author: displayName,
         channelId: channelId,
+        timestamp: new Date().toISOString(),
       };
       socket.emit("send_message", messageData);
+      const allMsg = JSON.parse(localStorage.getItem("messages"));
+      let newList = allMsg?.concat(messageData);
+      setDisplayMessages(newList?.slice(sliceCount));
+      localStorage.setItem("messages", JSON.stringify(newList));
       setCurrentMessage("");
       scrollToBottom();
     }
@@ -377,7 +382,7 @@ const Home = () => {
                             ? "bg-[#27273e]"
                             : "bg-[#1E1E30]"
                         } mt-2 p-2 w-fit`}
-                        key={messageData?.id}
+                        key={i}
                         id={i}
                       >
                         <div className="metaData text-[#c0caf5] pb-2 text-[0.7rem] flex justify-between items-center">

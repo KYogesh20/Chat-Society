@@ -22,14 +22,20 @@ const Server = ({ serverName }) => {
   const { serverInfo } = useContext(ServerContext);
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
-  // const { serverId } = useParams();
   const serverId = serverInfo.serverId;
+  const { channelId } = useParams();
   useEffect(() => {
     showChannels();
   }, [serverInfo]);
   useEffect(() => {
     showChannels();
   }, [showModal]);
+  useEffect(() => {
+    setChannelInfo({
+      ...channelInfo,
+      channelId,
+    });
+  }, []);
   const addChannel = async () => {
     try {
       const channelName = prompt("Enter channel name");

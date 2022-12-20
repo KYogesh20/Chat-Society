@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
     await sendMsg(data);
     // module.exports = data;
     console.log("message received!!!");
-    io.local.emit("received_message", {
+    socket.broadcast.emit("received_message", {
       data: "message received!!!",
       channelId: data.channelId,
     });
