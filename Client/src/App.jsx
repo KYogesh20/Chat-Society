@@ -9,6 +9,7 @@ import { ChannelContext } from "./components/Contexts/ChannelContext";
 import { ServerContext } from "./components/Contexts/ServerContext";
 import Server from "./components/Server/Server";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Index from "./components/Index/Index";
 
 function App() {
   const [channelInfo, setChannelInfo] = useState({
@@ -26,7 +27,7 @@ function App() {
       <ServerContext.Provider value={{ serverInfo, setServerInfo }}>
         <ChannelContext.Provider value={{ channelInfo, setChannelInfo }}>
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/register" element={<Signup />} />
