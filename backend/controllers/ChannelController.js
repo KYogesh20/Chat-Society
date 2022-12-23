@@ -28,7 +28,6 @@ exports.createChannel = async (req, res, next) => {
       result,
     });
   } catch (error) {
-    // throw new Error(error.message);
     res.json(error.message);
   }
 };
