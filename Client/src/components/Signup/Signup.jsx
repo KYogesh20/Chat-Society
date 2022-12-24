@@ -21,6 +21,14 @@ const Signup = () => {
     password: "",
     password2: "",
   });
+  const colors = [
+    "bg-[#0096c7]",
+    "bg-[#06d6a0]",
+    "bg-[#5465ff]",
+    "bg-[#fdca40]",
+    "bg-[#fb8b24]",
+    "bg-slate-800",
+  ];
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   onAuthStateChanged(auth, (currUser) => {
@@ -76,7 +84,8 @@ const Signup = () => {
       await updateProfile(auth.currentUser, {
         displayName: username,
         // photoURL:
-        //   "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
+        //   auth.currentUser.photoURL ||
+        //   colors[Math.floor(Math.random() * array.length)],
       });
       console.log(user);
       toast.update(id, {
@@ -114,9 +123,9 @@ const Signup = () => {
     try {
       const provider = new GoogleAuthProvider();
       const userDetail = await signInWithPopup(auth, provider);
+      // Have to store these numbers in db first
       // await updateProfile(auth.currentUser, {
-      //   photoURL:
-      //     "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
+      //   photoURL: colors[Math.floor(Math.random() * array.length)],
       // });
       console.log(userDetail.user);
       toast.update(id, {

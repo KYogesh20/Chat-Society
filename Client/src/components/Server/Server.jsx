@@ -14,6 +14,7 @@ import Modal from "../Modal/Modal";
 import { BiSad } from "react-icons/bi";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/scale-extreme.css";
+import "./Server.css";
 
 const Server = ({ serverName }) => {
   const navigate = useNavigate();
@@ -114,8 +115,10 @@ const Server = ({ serverName }) => {
                 onClick={() =>
                   setChannel(channel.id, channel.serverId, channel.channelName)
                 }
-                className={`flex items-center text-gray-200 cursor-pointer p-2 transition-all ease-in-out rounded-md ${
-                  channelInfo.channelId === channel.id ? "bg-[#2D2D47]" : null
+                className={`flex items-center  cursor-pointer p-2 transition-all ease-in-out rounded-md ${
+                  channelInfo.channelId === channel.id
+                    ? "activeChannel text-gray-200 font-semibold"
+                    : "text-gray-300"
                 }`}
               >
                 <HiOutlineChatAlt2 size={"1.1rem"} className="ml-1" />

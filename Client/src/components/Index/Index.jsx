@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { BsLightningFill } from "react-icons/bs";
+import { BsLightningFill, BsClockHistory } from "react-icons/bs";
 import { CgPerformance } from "react-icons/cg";
 import { HiOutlineChatBubbleLeft } from "react-icons/hi2";
 import { AiOutlineHome } from "react-icons/ai";
@@ -47,6 +47,10 @@ const Index = () => {
           <div className="flex items-center p-2 text-slate-300 rounded-lg my-5 featureCard cursor-pointer hover:text-blue-300 transition-all duration-150 ease-in-out">
             <AiOutlineHome />
             <p className="ml-4">Organize Chatrooms in Houses</p>
+          </div>
+          <div className="flex items-center p-2 text-slate-300 rounded-lg my-5 featureCard cursor-pointer hover:text-blue-300 transition-all duration-150 ease-in-out">
+            <BsClockHistory />
+            <p className="ml-4">More Features Coming Soon...</p>
           </div>
         </div>
         {/* Feature Image */}

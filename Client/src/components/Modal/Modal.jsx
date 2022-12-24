@@ -1,6 +1,7 @@
 import React, { useRef, useContext } from "react";
 import { ServerContext } from "../Contexts/ServerContext";
 import { AiOutlineCloseCircle, AiFillHome } from "react-icons/ai";
+import { ToastContainer, toast } from "react-toastify";
 import { BsFillDoorClosedFill } from "react-icons/bs";
 import axios from "axios";
 const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
@@ -15,6 +16,7 @@ const Modal = ({ showModal, closeModal, variant }) => {
     }
   };
   const submitData = async () => {
+    const id = toast.loading("Hold up...");
     try {
       const housename = houseRef?.current?.value;
       if (housename && variant === "House") {
@@ -30,15 +32,39 @@ const Modal = ({ showModal, closeModal, variant }) => {
           }
         );
         closeModal();
+        toast.update(id, {
+          render: "House created successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+          closeOnClick: true,
+          theme: "dark",
+        });
       } else if (housename && variant === "Room") {
         await axios.post(`${backendURL}/channelapi/createchannel`, {
           channelName: housename,
           serverId,
         });
         closeModal();
+        toast.update(id, {
+          render: "Chatroom created successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+          closeOnClick: true,
+          theme: "dark",
+        });
       }
     } catch (error) {
       console.log(error.message);
+      toast.update(id, {
+        render: "Some Error Occured!",
+        theme: "dark",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+        closeOnClick: true,
+      });
     }
   };
   if (!showModal) {
@@ -94,6 +120,7 @@ const Modal = ({ showModal, closeModal, variant }) => {
           </button>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
