@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import "./Home.css";
+import brand_image from "../../../public/images/index/brand_icon.png";
 import { FiUser } from "react-icons/fi";
-import { TfiHome } from "react-icons/tfi";
+import { AiOutlineHome, AiFillHome } from "react-icons/ai";
 import { signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +30,7 @@ const Home = () => {
   const [sliceCount, setSliceCount] = useState(-15);
   const [hasMore, setHasMore] = useState(true);
   const [displayName, setDisplayName] = useState("");
-  // const [photoURL, setPhotoURL] = useState("#");
+  // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
   const [showModal, setShowModal] = useState(false);
   const { serverInfo, setServerInfo } = useContext(ServerContext);
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
@@ -264,24 +265,10 @@ const Home = () => {
 
   return (
     <>
-      <div className="container w-full">
+      <div className="container">
         <div className="server p-3 border border-gray-600  flex flex-col justify-center items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-10 w-10 mb-5  text-blue-500 transition-all cursor-pointer"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-            />
-          </svg>
-          <hr className=" border-1 border-gray-700 w-full" />
-          <div className="flex justify-center items-center flex-col overflow-y-scroll scrollbar-hide">
+          <img src={brand_image} alt="chat-society" className="w-14 h-14" />
+          <div className="flex justify-center items-center flex-col overflow-y-scroll scrollbar-hide h-[90vh] my-3">
             {/* <button className="border-2 border-green-500 rounded w-10 h-10 ml-3">
                 +
               </button> */}
@@ -290,41 +277,50 @@ const Home = () => {
               return (
                 <div
                   key={server.id}
-                  className="flex flex-col cursor-pointer p-3  transition-all ease-in-out rounded-full bg-slate-800 my-1 hover:bg-slate-600"
+                  className={`flex flex-col cursor-pointer p-3  transition-all ease-in-out rounded-full bg-slate-800 my-1 hover:bg-slate-600 ${
+                    ind === 0 ? "mt-14" : null
+                  }`}
                   onClick={() => setServer(server.id, server.Name)}
                   onMouseOver={() => showTippy(ind, server?.Name)}
                   id={"s" + ind}
                 >
-                  <TfiHome size={"1.5rem"} />
+                  {server.id === serverInfo.serverId ? (
+                    <AiFillHome size={"1.5rem"} />
+                  ) : (
+                    <AiOutlineHome size={"1.5rem"} />
+                  )}
                 </div>
               );
             })}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 my-5 bg-slate-700 hover:rounded-xl hover:text-blue-500 transition-all cursor-pointer"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <div
+              className="my-5 p-3 bg-slate-800  rounded-full hover:text-blue-500 transition-all cursor-pointer duration-300 ease-in-out"
               onClick={() => setShowModal(true)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </div>
           </div>
           <div className="mt-auto flex justify-center flex-col items-center">
             {/* <p className="text-xs">{displayName}</p> */}
             <button
               onClick={logoutUser}
               data-background={"green"}
-              className={`transition-all rounded-full p-3 bg-[#2d2d47]`}
+              className={`transition-all rounded-full p-2 bg-slate-800`}
               id="profile"
             >
               <ToastContainer />
-              {/* <img src={photoURL} alt="profile" id="profile" /> */}
               <FiUser size={"1.7rem"} />
             </button>
           </div>
@@ -332,20 +328,20 @@ const Home = () => {
         <div>
           <Server serverName={serverInfo.serverName} />
         </div>
-        <div className="chat-body">
-          <div className="chat-body-header flex-grow justify-between">
-            <div className="">
-              {/* <p className="p-5">
-                  {channelInfo.channelName
-                    ? channelInfo.channelName
-                    : "ChannelName"}
-                </p> */}
+        <div className="chat-body w-full">
+          <div className="chat-body-header justify-between items-center h-fit pt-3">
+            <div className="p-2">
+              <p className="text-lg mt-auto text-slate-200 ml-5">
+                {channelInfo.channelName
+                  ? "#  " + channelInfo.channelName
+                  : "Select A channel"}
+              </p>
             </div>
-            <div className="p-2 w-15 mt-2">
+            <div className="p-2 w-15">
               <input
                 name="search"
                 placeholder="    searching..."
-                className="w-[30vh]  rounded-lg bg-[#101018] p-2"
+                className="w-[30vh] rounded-lg bg-[#101018] p-2 outline-none"
               />
             </div>
           </div>
@@ -353,7 +349,7 @@ const Home = () => {
                 Join a channel to show chats
               </p> */}
           <div
-            className="h-[80vh] mx-3 overflow-y-scroll flex flex-col-reverse"
+            className="h-[90vh] mx-3 overflow-y-scroll flex flex-col-reverse"
             id="scrollableDiv"
           >
             <InfiniteScroll
@@ -441,7 +437,7 @@ const Home = () => {
                     ? "Message #" + channelInfo.channelName
                     : "Select a channel"
                 }
-                className="send-message w-full rounded-lg pl-5 bg-[#2d2d47] outline-none"
+                className="send-message w-full rounded-lg py-2 px-3 bg-[#2d2d47] outline-none"
               />
               <input type="submit" hidden={true} />
             </form>

@@ -20,6 +20,14 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const colors = [
+    "bg-[#0096c7]",
+    "bg-[#06d6a0]",
+    "bg-[#5465ff]",
+    "bg-[#fdca40]",
+    "bg-[#fb8b24]",
+    "bg-slate-800",
+  ];
   onAuthStateChanged(auth, (currUser) => {
     if (currUser) {
       setIsAuthenticated(true);
@@ -49,7 +57,12 @@ const Login = () => {
     const id = toast.loading("Logging in...");
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      // console.log(user);
+      // Have to store these colors in db
+      // await updateProfile(auth.currentUser, {
+      //   photoURL:
+      //     auth.currentUser.photoURL ||
+      //     colors[Math.floor(Math.random() * array.length)],
+      // });
       toast.update(id, {
         render: "Login successful",
         type: "success",

@@ -21,7 +21,8 @@
 .container {
   background-color: #161625;
   display: grid;
-  grid-template-columns: 0.7fr 2fr 9fr;
+  grid-template-columns: 0.7fr 2fr 10fr;
+  width: 100vw;
   min-height: 100vh;
 }
 .server {
@@ -31,9 +32,8 @@
   background-color: #1e1e30;
 }
 .chat-body {
-  /* background-color: #27274e; */
   display: grid;
-  grid-template-rows: 1fr 7fr 1fr;
+  grid-template-rows: 1fr 6fr 1fr;
 }
 .chat-body-header {
   background-color: #1e1e30;
