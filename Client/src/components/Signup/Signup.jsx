@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import "../Login/Login.css";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -11,9 +11,11 @@ import {
 } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { ToastContainer, toast } from "react-toastify";
+import { UserContext } from "../Contexts/UserContext";
 import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
+  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState({
     username: "",
@@ -87,7 +89,16 @@ const Signup = () => {
         //   auth.currentUser.photoURL ||
         //   colors[Math.floor(Math.random() * array.length)],
       });
-      console.log(user);
+      const res = await axios.post(backendURL + "/userapi/adduser", {
+        Email: email,
+        Name: username,
+      });
+      let userInfo = {
+        userName: username,
+        userId: res.data?.id,
+      };
+      // preserve the userInfo state
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
       toast.update(id, {
         render: "Login successfull",
         type: "success",
@@ -123,11 +134,19 @@ const Signup = () => {
     try {
       const provider = new GoogleAuthProvider();
       const userDetail = await signInWithPopup(auth, provider);
-      // Have to store these numbers in db first
-      // await updateProfile(auth.currentUser, {
-      //   photoURL: colors[Math.floor(Math.random() * array.length)],
-      // });
-      console.log(userDetail.user);
+      const res = await axios.post(
+        backendURL + "/userapi/adduser",
+        JSON.stringify({
+          Email: userDetail.user.email,
+          Name: userDetail.user.displayName,
+        })
+      );
+      let userInfo = {
+        userName: res.data?.Name,
+        userId: res.data?.id,
+      };
+      // preserve the userInfo state
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
       toast.update(id, {
         render: "Login successfull",
         type: "success",

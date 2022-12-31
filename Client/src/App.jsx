@@ -7,6 +7,7 @@ import Profile from "./components/Profile/Profile";
 import { useState } from "react";
 import { ChannelContext } from "./components/Contexts/ChannelContext";
 import { ServerContext } from "./components/Contexts/ServerContext";
+import { UserContext } from "./components/Contexts/UserContext";
 import Server from "./components/Server/Server";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Index from "./components/Index/Index";
@@ -17,8 +18,12 @@ function App() {
     channelName: null,
   });
   const [serverInfo, setServerInfo] = useState({
-    serverName: "wearenoobs",
-    serverId: "634c006b3ffcbff96aa486b7",
+    serverName: null,
+    serverId: null,
+  });
+  const [userInfo, setUserInfo] = useState({
+    userName: null,
+    userId: null,
   });
 
   return (
@@ -26,15 +31,20 @@ function App() {
       {/* <ReactQueryDevtools /> */}
       <ServerContext.Provider value={{ serverInfo, setServerInfo }}>
         <ChannelContext.Provider value={{ channelInfo, setChannelInfo }}>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/register" element={<Signup />} />
-            <Route path="/dashboard" element={<Home />} />
-            <Route path="/dashboard/:serverId" element={<Home />} />
-            <Route path="/dashboard/:serverId/:channelId" element={<Home />} />
-          </Routes>
+          <UserContext.Provider value={{ userInfo, setUserInfo }}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/register" element={<Signup />} />
+              <Route path="/dashboard" element={<Home />} />
+              <Route path="/dashboard/:serverId" element={<Home />} />
+              <Route
+                path="/dashboard/:serverId/:channelId"
+                element={<Home />}
+              />
+            </Routes>
+          </UserContext.Provider>
         </ChannelContext.Provider>
       </ServerContext.Provider>
     </>

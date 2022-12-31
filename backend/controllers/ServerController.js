@@ -11,11 +11,12 @@ exports.getServerList = async (req, res, next) => {
 
 exports.addServer = async (req, res, next) => {
   try {
-    const { Name } = req.body;
+    const { Name, ownerId } = req.body;
     // console.log("Backend got name as ", Name);
     const result = await prisma.server.create({
       data: {
         Name,
+        Owner: { connect: { id: ownerId } },
       },
     });
     res.header("Access-Control-Allow-Origin", "*");

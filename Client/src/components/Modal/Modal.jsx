@@ -4,6 +4,7 @@ import { AiOutlineCloseCircle, AiFillHome } from "react-icons/ai";
 import { ToastContainer, toast } from "react-toastify";
 import { BsFillDoorClosedFill } from "react-icons/bs";
 import axios from "axios";
+import { UserContext } from "../Contexts/UserContext";
 const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const Modal = ({ showModal, closeModal, variant }) => {
@@ -17,20 +18,15 @@ const Modal = ({ showModal, closeModal, variant }) => {
   };
   const submitData = async () => {
     const id = toast.loading("Hold up...");
+    let userInfo = JSON.parse(localStorage.getItem("userInfo"));
     try {
       const housename = houseRef?.current?.value;
+      console.log(userInfo);
       if (housename && variant === "House") {
-        await axios.post(
-          backendURL + "/api/createserver",
-          JSON.stringify({
-            Name: housename,
-          }),
-          {
-            headers: {
-              "content-type": "application/json",
-            },
-          }
-        );
+        await axios.post(backendURL + "/api/createserver", {
+          Name: housename,
+          ownerId: userInfo.userId,
+        });
         closeModal();
         toast.update(id, {
           render: "House created successfully!",
@@ -44,6 +40,7 @@ const Modal = ({ showModal, closeModal, variant }) => {
         await axios.post(`${backendURL}/channelapi/createchannel`, {
           channelName: housename,
           serverId,
+          ownerId: userInfo.userId,
         });
         closeModal();
         toast.update(id, {
