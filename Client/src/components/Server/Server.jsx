@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { HiOutlineChatAlt2 } from "react-icons/hi";
 import { ServerContext } from "../Contexts/ServerContext";
+import { UserContext } from "../Contexts/UserContext";
 import { collection, addDoc } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import Channel from "../Channel/Channel";
@@ -53,10 +54,12 @@ const Server = ({ serverName }) => {
   };
   const showChannels = async () => {
     try {
-      const res = await axios.get(
-        `${backendURL}/channelapi/channels/${serverId}`
-      );
-      setChannels(res.data);
+      if (serverId) {
+        const res = await axios.get(
+          `${backendURL}/channelapi/channels/${serverId}`
+        );
+        setChannels(res.data);
+      }
     } catch (error) {
       console.log(error.message);
     }
@@ -80,7 +83,7 @@ const Server = ({ serverName }) => {
   return (
     <div className="channels p-2 border-2 border-transparent rounded-tl-2xl h-full">
       <div className="text-center border-b-2 border-[#26263d] mt-2 flex justify-between p-3">
-        <h1 className="text-lg">{serverName}</h1>
+        <h1 className="text-lg">{serverName ? serverName : "Servers"}</h1>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6 cursor-pointer"

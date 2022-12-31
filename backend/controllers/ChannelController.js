@@ -16,11 +16,12 @@ exports.getChannelList = async (req, res, next) => {
 
 exports.createChannel = async (req, res, next) => {
   try {
-    const { serverId, channelName } = req.body;
+    const { serverId, channelName, ownerId } = req.body;
     const result = await prisma.channel.create({
       data: {
         channelName,
         serverName: { connect: { id: serverId } },
+        Owner: { connect: { id: ownerId } },
       },
     });
     res.json({

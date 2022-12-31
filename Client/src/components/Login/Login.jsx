@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import "./Login.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -11,11 +11,15 @@ import {
 import { auth } from "../../firebase-config.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { UserContext } from "../Contexts/UserContext";
+import axios from "axios";
 // import Home from "../Home/Home";
 
 const Login = () => {
   const navigate = useNavigate();
+  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { setUserInfo } = useContext(UserContext);
   const [userDetails, setUserDetails] = useState({
     email: "",
     password: "",
@@ -63,6 +67,16 @@ const Login = () => {
       //     auth.currentUser.photoURL ||
       //     colors[Math.floor(Math.random() * array.length)],
       // });
+      const res = await axios.post(backendURL + "/userapi/adduser", {
+        Email: email,
+        Name: user.user.displayName,
+      });
+      let userInfo = {
+        userName: res.data?.Name,
+        userId: res.data?.id,
+      };
+      // preserve the userInfo state
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
       toast.update(id, {
         render: "Login successful",
         type: "success",
@@ -93,6 +107,17 @@ const Login = () => {
     try {
       const provider = new GoogleAuthProvider();
       const userDetail = await signInWithPopup(auth, provider);
+      const res = await axios.post(backendURL + "/userapi/adduser", {
+        Email: email,
+        Name: userDetail.user.displayName,
+      });
+      let userInfo = {
+        userName: res.data?.Name,
+        userId: res.data?.id,
+      };
+      // preserve the userInfo state
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
       // await updateProfile(auth.currentUser, {
       //   photoURL:
       //     "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",

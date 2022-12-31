@@ -36,7 +36,7 @@ const Home = () => {
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentMessage, setCurrentMessage] = useState("");
-  const { channelId } = useParams();
+  const { channelId, serverId } = useParams();
   const [channelIdState, setChannelIdState] = useState(channelId);
   const chatRef = useRef(null);
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
@@ -99,39 +99,21 @@ const Home = () => {
     localStorage.setItem("messages", JSON.stringify(newList));
   };
 
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isLoading,
-    isError,
-    isFetching,
-    isFetchingNextPage,
-    status,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey: [`messages`],
-    queryFn: fetchProjects,
-    getNextPageParam: (lastPage, pages) => {
-      return lastPage?.next;
-    },
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
-
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
     }
-    showServers();
+    setTimeout(() => {
+      showServers();
+      setServerInfo({
+        ...serverInfo,
+        serverId,
+      });
+    }, 1000);
   }, []);
 
   useEffect(() => {
-    localStorage.clear();
-    scrollToBottom();
+    localStorage.removeItem("messages");
     // console.log("Current correct channelId", channelId);
     fetchAllMsgs();
   }, [channelId]);
@@ -177,6 +159,7 @@ const Home = () => {
           theme: "dark",
         });
         setIsAuthenticated(false);
+        localStorage.clear();
         navigate("/login");
       })
       .catch((e) => {
@@ -194,9 +177,15 @@ const Home = () => {
 
   const showServers = async () => {
     try {
-      const res = await axios.get(`${backendURL}/api/getserver`);
+      let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      console.log(userInfo);
+      // if (userInfo) {
+      const res = await axios.get(
+        `${backendURL}/userapi/getserver/${userInfo?.userId}`
+      );
+      setServers(res.data?.servers);
+      // }
       // console.log("servers are ", res);
-      setServers(res.data);
     } catch (error) {
       console.log(error.message);
     }
@@ -268,7 +257,7 @@ const Home = () => {
       <div className="container">
         <div className="server p-3 border border-gray-600  flex flex-col justify-center items-center">
           <img src={brand_image} alt="chat-society" className="w-14 h-14" />
-          <div className="flex justify-center items-center flex-col overflow-y-scroll scrollbar-hide h-[90vh] my-3">
+          <div className="flex  items-center flex-col overflow-y-scroll scrollbar-hide h-[90vh] my-3">
             {/* <button className="border-2 border-green-500 rounded w-10 h-10 ml-3">
                 +
               </button> */}
@@ -277,8 +266,8 @@ const Home = () => {
               return (
                 <div
                   key={server.id}
-                  className={`flex flex-col cursor-pointer p-3  transition-all ease-in-out rounded-full bg-slate-800 my-1 hover:bg-slate-600 ${
-                    ind === 0 ? "mt-14" : null
+                  className={`cursor-pointer p-3  transition-all ease-in-out rounded-full bg-slate-800 my-1 hover:bg-slate-700 ${
+                    ind === 0 ? "mt-2" : null
                   }`}
                   onClick={() => setServer(server.id, server.Name)}
                   onMouseOver={() => showTippy(ind, server?.Name)}
