@@ -31,12 +31,7 @@ exports.getJoinedServers = async (req, res, next) => {
         id,
       },
       select: {
-        servers: {
-          select: {
-            id: true,
-            Name: true,
-          },
-        },
+        joinedServers: true,
       },
     });
     res.json(servers[0]);

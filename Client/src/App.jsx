@@ -20,6 +20,7 @@ function App() {
   const [serverInfo, setServerInfo] = useState({
     serverName: null,
     serverId: null,
+    serverCode: null,
   });
   const [userInfo, setUserInfo] = useState({
     userName: null,
