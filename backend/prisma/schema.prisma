@@ -36,6 +36,7 @@ model Server{
   id String  @id @default(auto()) @map("_id") @db.ObjectId
   Name String
   channels Channel[]
+  Code String @unique
   ownerId String @db.ObjectId
   Owner User @relation(fields: [ownerId], references: [id])
 }
@@ -45,6 +46,7 @@ model User{
   id String @id @default(auto()) @map("_id") @db.ObjectId
   Email String
   Name String
+  joinedServers Json[]
   servers Server[]
   channels Channel[]
 }

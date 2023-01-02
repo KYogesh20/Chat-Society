@@ -80,9 +80,9 @@ app.use(function (err, req, res, next) {
 //   console.log(`server started on port 5000..`);
 // });
 // const deletekarde = async () => {
-//   await prisma.message.deleteMany({});
+//   // await prisma.message.deleteMany({});
 //   // await prisma.server.deleteMany({});
-//   await prisma.channel.deleteMany({});
+//   // await prisma.channel.deleteMany({});
 //   console.log("Deleted!");
 // };
 // deletekarde();

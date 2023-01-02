@@ -183,9 +183,7 @@ const Home = () => {
       const res = await axios.get(
         `${backendURL}/userapi/getserver/${userInfo?.userId}`
       );
-      setServers(res.data?.servers);
-      // }
-      // console.log("servers are ", res);
+      setServers(res.data?.joinedServers);
     } catch (error) {
       console.log(error.message);
     }
@@ -215,10 +213,11 @@ const Home = () => {
     }
   };
 
-  const setServer = (serverid, servername) => {
+  const setServer = (serverid, servername, servercode) => {
     setServerInfo({
       serverName: servername,
       serverId: serverid,
+      serverCode: servercode,
     });
     navigate(`/dashboard/${serverid}`);
   };
@@ -269,7 +268,7 @@ const Home = () => {
                   className={`cursor-pointer p-3  transition-all ease-in-out rounded-full bg-slate-800 my-1 hover:bg-slate-700 ${
                     ind === 0 ? "mt-2" : null
                   }`}
-                  onClick={() => setServer(server.id, server.Name)}
+                  onClick={() => setServer(server.id, server.Name, server.Code)}
                   onMouseOver={() => showTippy(ind, server?.Name)}
                   id={"s" + ind}
                 >
@@ -319,12 +318,13 @@ const Home = () => {
         </div>
         <div className="chat-body w-full">
           <div className="chat-body-header justify-between items-center h-fit pt-3">
-            <div className="p-2">
+            <div className="p-2 flex">
               <p className="text-lg mt-auto text-slate-200 ml-5">
                 {channelInfo.channelName
                   ? "#  " + channelInfo.channelName
                   : "Select A channel"}
               </p>
+              <p className="ml-5">Server Code: {serverInfo.serverCode}</p>
             </div>
             <div className="p-2 w-15">
               <input
