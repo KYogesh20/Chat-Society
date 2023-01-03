@@ -473,7 +473,12 @@ const Home = () => {
             </form>
           </div>
         </div>
-        <Modal showModal={showModal} closeModal={closeModal} variant="House" />
+        <Modal
+          showModal={showModal}
+          closeModal={closeModal}
+          variant="House"
+          servers={servers}
+        />
         <InviteModal
           showModal={showInviteModal}
           closeModal={closeInviteModal}

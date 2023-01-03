@@ -1,10 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import { BsJournalCode } from "react-icons/bs";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
 
-const AddServer = ({ closeModal }) => {
+const AddServer = ({ closeModal, servers }) => {
   const codeRef = useRef(null);
   const submitData = async () => {
     const id = toast.loading("Hold up...");
@@ -12,20 +12,32 @@ const AddServer = ({ closeModal }) => {
     try {
       const code = codeRef?.current?.value;
       if (code) {
-        const response = await axios.post(backendURL + "/api/joinserver", {
-          Code: code,
-          userId: userInfo.userId,
-        });
-        closeModal();
-        console.log(response);
-        toast.update(id, {
-          render: "You successfully joined the house!",
-          type: "info",
-          isLoading: false,
-          autoClose: 2000,
-          closeOnClick: true,
-          theme: "dark",
-        });
+        let presentCode = servers.filter((server) => server["Code"] === code);
+        if (presentCode.length > 0) {
+          toast.update(id, {
+            render: "You have already joined this server!",
+            isLoading: false,
+            type: "info",
+            theme: "dark",
+            closeOnClick: true,
+            autoClose: 2000,
+          });
+        } else {
+          const response = await axios.post(backendURL + "/api/joinserver", {
+            Code: code,
+            userId: userInfo.userId,
+          });
+          closeModal();
+          console.log(response);
+          toast.update(id, {
+            render: "You successfully joined the house!",
+            type: "info",
+            isLoading: false,
+            autoClose: 2000,
+            closeOnClick: true,
+            theme: "dark",
+          });
+        }
       }
     } catch (error) {
       console.log(error.message);

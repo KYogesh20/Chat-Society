@@ -8,7 +8,7 @@ import CreateServer from "./CreateServer";
 import AddServer from "./AddServer";
 import "./Modal.css";
 
-const Modal = ({ showModal, closeModal, variant }) => {
+const Modal = ({ showModal, closeModal, variant, servers }) => {
   const { serverInfo } = useContext(ServerContext);
   const [flag, setFlag] = useState(true);
   const serverId = serverInfo.serverId;
@@ -62,7 +62,7 @@ const Modal = ({ showModal, closeModal, variant }) => {
         {flag ? (
           <CreateServer closeModal={closeModal} variant={variant} />
         ) : (
-          <AddServer closeModal={closeModal} />
+          <AddServer closeModal={closeModal} servers={servers} />
         )}
       </div>
       <ToastContainer />
