@@ -88,7 +88,7 @@ const Server = ({ serverName }) => {
   return (
     <div className="channels p-2 border-2 border-transparent rounded-tl-2xl h-full">
       <div className="text-center border-b-2 border-[#26263d] mt-2 flex justify-between p-3">
-        <h1 className="text-lg">{serverName ? serverName : "Servers"}</h1>
+        <h1 className="text-lg">{serverName ? serverName : "HouseName"}</h1>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6 cursor-pointer"
