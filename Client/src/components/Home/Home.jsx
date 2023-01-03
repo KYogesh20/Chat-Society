@@ -34,6 +34,7 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [displayName, setDisplayName] = useState("");
+  const [msgflag, setMsgflag] = useState(false);
   // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
   const [showModal, setShowModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -225,6 +226,8 @@ const Home = () => {
       serverId: serverid,
       serverCode: servercode,
     });
+    setMsgflag(false);
+    // localStorage.removeItem("messages");
     navigate(`/dashboard/${serverid}`);
   };
 
@@ -330,7 +333,7 @@ const Home = () => {
           </div>
         </div>
         <div>
-          <Server serverName={serverInfo.serverName} />
+          <Server serverName={serverInfo.serverName} setMsgflag={setMsgflag} />
         </div>
         <div className="chat-body w-full ">
           <div className="chat-body-header justify-between items-center h-fit pt-3 ">
@@ -371,65 +374,73 @@ const Home = () => {
             className="h-[70vh] mx-3 overflow-y-scroll flex flex-col-reverse"
             id="scrollableDiv"
           >
-            <InfiniteScroll
-              dataLength={displayMessages?.length}
-              next={fetchNextMessages}
-              datascrollableDivLength={displayMessages?.length}
-              // style={{ display: "flex", flexDirection: "column-reverse" }}
-              inverse={true}
-              hasMore={hasMore}
-              loader={<h4>Loading...</h4>}
-              scrollableTarget="scrollableDiv"
-              scrollThreshold={0.9}
-            >
-              {displayMessages?.map((messageData, i) => {
-                return (
-                  <Fragment key={i}>
-                    <div className="flex">
-                      <div
-                        className={`mt-2 bg-[#2d2d47] p-2 rounded-full h-fit`}
-                      >
-                        <FiUser size={"1.2rem"} />
-                      </div>
-                      <div
-                        className={`messageCard flex flex-col border-2 border-[#16161e] rounded-r-[0.9rem] rounded-bl-[0.9rem] ${
-                          displayName === messageData?.author
-                            ? "bg-[#27273e]"
-                            : "bg-[#1E1E30]"
-                        } mt-2 p-2 w-fit`}
-                        key={i}
-                        id={i}
-                      >
-                        <div className="metaData text-[#c0caf5] pb-2 text-[0.7rem] flex justify-between items-center">
-                          <div className="text-[1rem]">
-                            {displayName === messageData?.author
-                              ? "You"
-                              : messageData?.author}
-                          </div>
-                          <div className="ml-3 mt-1 text-gray-300">
-                            {new Date().toLocaleDateString() ===
-                            new Date(
-                              messageData?.timestamp
-                            ).toLocaleDateString()
-                              ? `Today at ${new Date(
-                                  messageData?.timestamp
-                                ).toLocaleTimeString()}`
-                              : `${new Date(
-                                  messageData?.timestamp
-                                ).toLocaleDateString()} 
+            {msgflag ? (
+              <InfiniteScroll
+                dataLength={displayMessages?.length}
+                next={fetchNextMessages}
+                datascrollableDivLength={displayMessages?.length}
+                // style={{ display: "flex", flexDirection: "column-reverse" }}
+                inverse={true}
+                hasMore={hasMore}
+                loader={<h4>Loading...</h4>}
+                scrollableTarget="scrollableDiv"
+                scrollThreshold={0.9}
+              >
+                {displayMessages?.map((messageData, i) => {
+                  return (
+                    <Fragment key={i}>
+                      <div className="flex">
+                        <div
+                          className={`mt-2 bg-[#2d2d47] p-2 rounded-full h-fit`}
+                        >
+                          <FiUser size={"1.2rem"} />
+                        </div>
+                        <div
+                          className={`messageCard flex flex-col border-2 border-[#16161e] rounded-r-[0.9rem] rounded-bl-[0.9rem] ${
+                            displayName === messageData?.author
+                              ? "bg-[#27273e]"
+                              : "bg-[#1E1E30]"
+                          } mt-2 p-2 w-fit`}
+                          key={i}
+                          id={i}
+                        >
+                          <div className="metaData text-[#c0caf5] pb-2 text-[0.7rem] flex justify-between items-center">
+                            <div className="text-[1rem]">
+                              {displayName === messageData?.author
+                                ? "You"
+                                : messageData?.author}
+                            </div>
+                            <div className="ml-3 mt-1 text-gray-300">
+                              {new Date().toLocaleDateString() ===
+                              new Date(
+                                messageData?.timestamp
+                              ).toLocaleDateString()
+                                ? `Today at ${new Date(
+                                    messageData?.timestamp
+                                  ).toLocaleTimeString()}`
+                                : `${new Date(
+                                    messageData?.timestamp
+                                  ).toLocaleDateString()} 
                           ${new Date(
                             messageData?.timestamp
                           ).toLocaleTimeString()}`}
+                            </div>
                           </div>
+                          <div className="message">{messageData?.message}</div>
                         </div>
-                        <div className="message">{messageData?.message}</div>
                       </div>
-                    </div>
-                  </Fragment>
-                );
-              })}
-              <div className="pb-3" ref={chatRef} />
-            </InfiniteScroll>
+                    </Fragment>
+                  );
+                })}
+                <div className="pb-3" ref={chatRef} />
+              </InfiniteScroll>
+            ) : (
+              <div className="flex justify-center items-center h-full w-full">
+                <p className="text-gray-400">
+                  Please select a chatroom to start chatting.
+                </p>
+              </div>
+            )}
           </div>
           <div className="chat-footer p-4 text-lg flex-grow ">
             <form
@@ -450,7 +461,7 @@ const Home = () => {
                 //   event.key === "Enter" && sendMessage();
                 // }}
                 name="send-message"
-                // disabled={!channelInfo.channelId}
+                disabled={!msgflag}
                 placeholder={
                   channelInfo.channelName
                     ? "Message #" + channelInfo.channelName
