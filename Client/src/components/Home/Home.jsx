@@ -4,6 +4,7 @@ import brand_image from "../../../public/images/index/brand_icon.png";
 import { FiUser } from "react-icons/fi";
 import { AiOutlineHome, AiFillHome } from "react-icons/ai";
 import { signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { auth } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -23,6 +24,7 @@ import { socket } from "../../IO";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Modal from "../Modal/Modal";
 import HomeSkeleton from "../Skeletons/HomeSkeleton";
+import InviteModal from "../Modal/InviteModal";
 
 const Home = () => {
   // console.log(socket);
@@ -34,6 +36,7 @@ const Home = () => {
   const [displayName, setDisplayName] = useState("");
   // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
   const [showModal, setShowModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const { serverInfo, setServerInfo } = useContext(ServerContext);
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -250,20 +253,13 @@ const Home = () => {
     setShowModal(false);
   };
 
+  const closeInviteModal = () => {
+    setShowInviteModal(false);
+  };
+
   useEffect(() => {
     showServers();
   }, [showModal]);
-
-  // Copy toast
-  const showCopyToast = () => {
-    toast("Code copied successfully!", {
-      theme: "dark",
-      type: "info",
-      closeButton: false,
-      closeOnClick: true,
-      position: "top-right",
-    });
-  };
 
   return (
     <>
@@ -342,9 +338,9 @@ const Home = () => {
               <p className="text-lg my-auto text-slate-200 ml-5">
                 {channelInfo.channelName
                   ? "#  " + channelInfo.channelName
-                  : "Select A channel"}
+                  : "Select a chatroom"}
               </p>
-              <p
+              {/* <p
                 className="ml-5 codeDiv rounded-lg p-2 text-slate-200 hover:text-blue-400 cursor-pointer"
                 onClick={() => {
                   showCopyToast();
@@ -352,7 +348,13 @@ const Home = () => {
                 }}
               >
                 Server Code: {serverInfo.serverCode}
-              </p>
+              </p> */}
+              <button
+                className="flex text-slate-200 hover:text-blue-400 transition-all duration-200 ease-in-out codeDiv rounded-lg items-center px-3 py-1 ml-3"
+                onClick={() => setShowInviteModal(true)}
+              >
+                <MdOutlinePersonAddAlt /> <p className="ml-3"> Invite</p>
+              </button>
             </div>
             <div className="p-2 w-15">
               <input
@@ -461,6 +463,11 @@ const Home = () => {
           </div>
         </div>
         <Modal showModal={showModal} closeModal={closeModal} variant="House" />
+        <InviteModal
+          showModal={showInviteModal}
+          closeModal={closeInviteModal}
+          Code={serverInfo.serverCode}
+        />
       </div>
     </>
   );
