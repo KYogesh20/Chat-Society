@@ -12,6 +12,7 @@ exports.addUser = async (req, res, next) => {
         data: {
           Email,
           Name,
+          joinedServers: [],
         },
       });
       res.json(result);

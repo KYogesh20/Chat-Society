@@ -68,7 +68,7 @@ const Login = () => {
       //     colors[Math.floor(Math.random() * array.length)],
       // });
       const res = await axios.post(backendURL + "/userapi/adduser", {
-        Email: email,
+        Email: user.user.email,
         Name: user.user.displayName,
       });
       let userInfo = {
@@ -108,7 +108,7 @@ const Login = () => {
       const provider = new GoogleAuthProvider();
       const userDetail = await signInWithPopup(auth, provider);
       const res = await axios.post(backendURL + "/userapi/adduser", {
-        Email: email,
+        Email: userDetail.user.email,
         Name: userDetail.user.displayName,
       });
       let userInfo = {

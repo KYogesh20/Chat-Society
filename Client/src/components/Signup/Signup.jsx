@@ -134,13 +134,10 @@ const Signup = () => {
     try {
       const provider = new GoogleAuthProvider();
       const userDetail = await signInWithPopup(auth, provider);
-      const res = await axios.post(
-        backendURL + "/userapi/adduser",
-        JSON.stringify({
-          Email: userDetail.user.email,
-          Name: userDetail.user.displayName,
-        })
-      );
+      const res = await axios.post(backendURL + "/userapi/adduser", {
+        Email: userDetail.user.email,
+        Name: userDetail.user.displayName,
+      });
       let userInfo = {
         userName: res.data?.Name,
         userId: res.data?.id,
