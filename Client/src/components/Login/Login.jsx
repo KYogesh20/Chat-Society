@@ -11,15 +11,17 @@ import {
 import { auth } from "../../firebase-config.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { UserContext } from "../Contexts/UserContext";
+import { ServerContext } from "../Contexts/ServerContext";
+import { ChannelContext } from "../Contexts/ChannelContext";
 import axios from "axios";
 // import Home from "../Home/Home";
 
 const Login = () => {
   const navigate = useNavigate();
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
+  const { setServerInfo } = useContext(ServerContext);
+  const { setChannelInfo } = useContext(ChannelContext);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { setUserInfo } = useContext(UserContext);
   const [userDetails, setUserDetails] = useState({
     email: "",
     password: "",
@@ -117,7 +119,15 @@ const Login = () => {
       };
       // preserve the userInfo state
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
-
+      setServerInfo({
+        serverName: null,
+        serverId: null,
+        serverCode: null,
+      });
+      setChannelInfo({
+        channelId: null,
+        channelName: null,
+      });
       // await updateProfile(auth.currentUser, {
       //   photoURL:
       //     "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
