@@ -12,11 +12,15 @@ import {
 import { auth } from "../../firebase-config";
 import { ToastContainer, toast } from "react-toastify";
 import { UserContext } from "../Contexts/UserContext";
+import { ServerContext } from "../Contexts/ServerContext";
+import { ChannelContext } from "../Contexts/ChannelContext";
 import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const navigate = useNavigate();
+  const { setServerInfo } = useContext(ServerContext);
+  const { setChannelInfo } = useContext(ChannelContext);
   const [userDetails, setUserDetails] = useState({
     username: "",
     email: "",
@@ -99,6 +103,15 @@ const Signup = () => {
       };
       // preserve the userInfo state
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      setServerInfo({
+        serverName: null,
+        serverId: null,
+        serverCode: null,
+      });
+      setChannelInfo({
+        channelId: null,
+        channelName: null,
+      });
       toast.update(id, {
         render: "Login successfull",
         type: "success",
@@ -144,6 +157,15 @@ const Signup = () => {
       };
       // preserve the userInfo state
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      setServerInfo({
+        serverName: null,
+        serverId: null,
+        serverCode: null,
+      });
+      setChannelInfo({
+        channelId: null,
+        channelName: null,
+      });
       toast.update(id, {
         render: "Login successfull",
         type: "success",
