@@ -16,20 +16,24 @@ import { BiSad } from "react-icons/bi";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/scale-extreme.css";
 import "./Server.css";
+import ChannelSkeleton from "../Skeletons/ChannelSkeleton";
 
 const Server = ({ serverName }) => {
   const navigate = useNavigate();
   const [channels, setChannels] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { serverInfo } = useContext(ServerContext);
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const serverId = serverInfo.serverId;
   const { channelId } = useParams();
   useEffect(() => {
+    setIsLoading(true);
     showChannels();
   }, [serverInfo]);
   useEffect(() => {
+    setIsLoading(true);
     showChannels();
   }, [showModal]);
   useEffect(() => {
@@ -59,6 +63,7 @@ const Server = ({ serverName }) => {
           `${backendURL}/channelapi/channels/${serverId}`
         );
         setChannels(res.data);
+        setIsLoading(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -102,7 +107,11 @@ const Server = ({ serverName }) => {
         </svg>
       </div>
       <div className="flex flex-col space-y-2 mt-3 overflow-y-scroll scrollbar-hide w-full">
-        {channels.length === 0 ? (
+        {isLoading ? (
+          [1, 2, 3].map(() => {
+            return <ChannelSkeleton />;
+          })
+        ) : channels.length === 0 ? (
           <div className="w-full text-gray-300 text-center flex flex-col justify-center items-center p-3 bg-gray-700 rounded-lg">
             <div className="my-2">You Don't have any rooms in your house</div>
             <BiSad size={"2rem"} />

@@ -22,6 +22,7 @@ import "tippy.js/animations/shift-away-subtle.css";
 import { socket } from "../../IO";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Modal from "../Modal/Modal";
+import HomeSkeleton from "../Skeletons/HomeSkeleton";
 
 const Home = () => {
   // console.log(socket);
@@ -29,6 +30,7 @@ const Home = () => {
   const [displayMessages, setDisplayMessages] = useState([]);
   const [sliceCount, setSliceCount] = useState(-15);
   const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [displayName, setDisplayName] = useState("");
   // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
   const [showModal, setShowModal] = useState(false);
@@ -184,6 +186,7 @@ const Home = () => {
         `${backendURL}/userapi/getserver/${userInfo?.userId}`
       );
       setServers(res.data?.joinedServers);
+      setIsLoading(false);
     } catch (error) {
       console.log(error.message);
     }
@@ -251,35 +254,52 @@ const Home = () => {
     showServers();
   }, [showModal]);
 
+  // Copy toast
+  const showCopyToast = () => {
+    toast("Code copied successfully!", {
+      theme: "dark",
+      type: "info",
+      closeButton: false,
+      closeOnClick: true,
+      position: "top-right",
+    });
+  };
+
   return (
     <>
-      <div className="container">
-        <div className="server p-3 border border-gray-600  flex flex-col justify-center items-center">
+      <div className="container h-screen">
+        <div className="p-3 border border-gray-600  flex flex-col justify-center items-center h-full">
           <img src={brand_image} alt="chat-society" className="w-14 h-14" />
-          <div className="flex  items-center flex-col overflow-y-scroll scrollbar-hide h-[90vh] my-3">
+          <div className="flex  items-center flex-col overflow-y-scroll scrollbar-hide h-[70vh] my-3">
             {/* <button className="border-2 border-green-500 rounded w-10 h-10 ml-3">
                 +
               </button> */}
 
-            {servers?.map((server, ind) => {
-              return (
-                <div
-                  key={server.id}
-                  className={`cursor-pointer p-3  transition-all ease-in-out rounded-full bg-slate-800 my-1 hover:bg-slate-700 ${
-                    ind === 0 ? "mt-2" : null
-                  }`}
-                  onClick={() => setServer(server.id, server.Name, server.Code)}
-                  onMouseOver={() => showTippy(ind, server?.Name)}
-                  id={"s" + ind}
-                >
-                  {server.id === serverInfo.serverId ? (
-                    <AiFillHome size={"1.5rem"} />
-                  ) : (
-                    <AiOutlineHome size={"1.5rem"} />
-                  )}
-                </div>
-              );
-            })}
+            {!isLoading
+              ? servers?.map((server, ind) => {
+                  return (
+                    <div
+                      key={server.id}
+                      className={`cursor-pointer p-3  transition-all ease-in-out rounded-full bg-slate-800 my-1 hover:bg-slate-700 ${
+                        ind === 0 ? "mt-2" : null
+                      }`}
+                      onClick={() =>
+                        setServer(server.id, server.Name, server.Code)
+                      }
+                      onMouseOver={() => showTippy(ind, server?.Name)}
+                      id={"s" + ind}
+                    >
+                      {server.id === serverInfo.serverId ? (
+                        <AiFillHome size={"1.5rem"} />
+                      ) : (
+                        <AiOutlineHome size={"1.5rem"} />
+                      )}
+                    </div>
+                  );
+                })
+              : [1, 2, 3, 4, 5].map(() => {
+                  return <HomeSkeleton />;
+                })}
             <div
               className="my-5 p-3 bg-slate-800  rounded-full hover:text-blue-500 transition-all cursor-pointer duration-300 ease-in-out"
               onClick={() => setShowModal(true)}
@@ -316,15 +336,23 @@ const Home = () => {
         <div>
           <Server serverName={serverInfo.serverName} />
         </div>
-        <div className="chat-body w-full">
-          <div className="chat-body-header justify-between items-center h-fit pt-3">
-            <div className="p-2 flex">
-              <p className="text-lg mt-auto text-slate-200 ml-5">
+        <div className="chat-body w-full ">
+          <div className="chat-body-header justify-between items-center h-fit pt-3 ">
+            <div className="p-2 flex items-center">
+              <p className="text-lg my-auto text-slate-200 ml-5">
                 {channelInfo.channelName
                   ? "#  " + channelInfo.channelName
                   : "Select A channel"}
               </p>
-              <p className="ml-5">Server Code: {serverInfo.serverCode}</p>
+              <p
+                className="ml-5 codeDiv rounded-lg p-2 text-slate-200 hover:text-blue-400 cursor-pointer"
+                onClick={() => {
+                  showCopyToast();
+                  navigator.clipboard.writeText(serverInfo.serverCode);
+                }}
+              >
+                Server Code: {serverInfo.serverCode}
+              </p>
             </div>
             <div className="p-2 w-15">
               <input
@@ -338,7 +366,7 @@ const Home = () => {
                 Join a channel to show chats
               </p> */}
           <div
-            className="h-[90vh] mx-3 overflow-y-scroll flex flex-col-reverse"
+            className="h-[70vh] mx-3 overflow-y-scroll flex flex-col-reverse"
             id="scrollableDiv"
           >
             <InfiniteScroll
