@@ -17,7 +17,7 @@ import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/scale-extreme.css";
 import ChannelSkeleton from "../Skeletons/ChannelSkeleton";
 
-const Server = ({ serverName, setMsgflag }) => {
+const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
   const navigate = useNavigate();
   const [channels, setChannels] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -75,6 +75,7 @@ const Server = ({ serverName, setMsgflag }) => {
       channelName: cname,
     });
     setMsgflag(true);
+    setMsgLoading(true);
     navigate(`/dashboard/${sid}/${id}`);
   };
   tippy("#addChannel", {

@@ -25,6 +25,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Modal from "../Modal/Modal";
 import HomeSkeleton from "../Skeletons/HomeSkeleton";
 import InviteModal from "../Modal/InviteModal";
+import MessageSkeleton from "../Skeletons/MessageSkeleton";
 
 const Home = () => {
   // console.log(socket);
@@ -33,6 +34,7 @@ const Home = () => {
   const [sliceCount, setSliceCount] = useState(-15);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [msgLoading, setMsgLoading] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [msgflag, setMsgflag] = useState(false);
   // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
@@ -77,6 +79,7 @@ const Home = () => {
     const data = await res.json();
     localStorage.setItem("messages", JSON.stringify(data?.msgs));
     setDisplayMessages(data?.msgs.slice(-15));
+    setMsgLoading(false);
   };
   const fetchNextMessages = () => {
     console.log("fetchNextMessages got triggered with slice value", sliceCount);
@@ -333,7 +336,11 @@ const Home = () => {
           </div>
         </div>
         <div>
-          <Server serverName={serverInfo.serverName} setMsgflag={setMsgflag} />
+          <Server
+            serverName={serverInfo.serverName}
+            setMsgflag={setMsgflag}
+            setMsgLoading={setMsgLoading}
+          />
         </div>
         <div className="chat-body w-full ">
           <div className="chat-body-header justify-between items-center h-fit pt-3">
@@ -376,7 +383,11 @@ const Home = () => {
             className="h-[70vh] mx-3 overflow-y-scroll flex flex-col-reverse"
             id="scrollableDiv"
           >
-            {msgflag ? (
+            {msgLoading ? (
+              [1, 2, 3, 4, 5].map(() => {
+                return <MessageSkeleton />;
+              })
+            ) : msgflag ? (
               <InfiniteScroll
                 dataLength={displayMessages?.length}
                 next={fetchNextMessages}
