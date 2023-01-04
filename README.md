@@ -17,6 +17,10 @@ NOTE: THIS WEB APPLICATION WILL NOT WORK PROPERLY ON MOBILE SO PLEASE USE DESKTO
 - Open source 😄 
 - And many more...
 
+# Documentation 📝
+
+Find the full documentation of application on our [wiki](https://github.com/KYogesh20/Chat-App/wiki) page.
+
 # Sneak peek 👀 
 
 ![image](https://user-images.githubusercontent.com/70281451/210524065-a7091181-6397-408a-8e9d-ea6c5594d4af.png)
