@@ -22,7 +22,7 @@ const Index = () => {
             A place for you to chat,connect and interact...
           </p>
           <NavLink to="/login">
-            <button className="getStartedBtn p-3 text-gray-200 rounded-xl my-2">
+            <button className="getStartedBtn p-3 text-gray-100 rounded-xl my-2">
               Get Started
             </button>
           </NavLink>

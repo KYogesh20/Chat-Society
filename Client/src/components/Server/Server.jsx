@@ -132,7 +132,7 @@ const Server = ({ serverName, setMsgflag }) => {
                 }
                 className={`flex items-center  cursor-pointer p-2 transition-all ease-in-out rounded-md ${
                   channelInfo.channelId === channel.id
-                    ? "activeChannel text-gray-200 font-semibold"
+                    ? " bg-slate-700/80"
                     : "text-gray-300"
                 }`}
               >

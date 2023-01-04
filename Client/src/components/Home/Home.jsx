@@ -336,8 +336,8 @@ const Home = () => {
           <Server serverName={serverInfo.serverName} setMsgflag={setMsgflag} />
         </div>
         <div className="chat-body w-full ">
-          <div className="chat-body-header justify-between items-center h-fit pt-3 ">
-            <div className="p-2 flex items-center">
+          <div className="chat-body-header justify-between items-center h-fit pt-3">
+            <div className="p-2 flex items-center mb-2">
               <p className="text-lg my-auto text-slate-200 ml-5">
                 {channelInfo.channelName
                   ? "#  " + channelInfo.channelName
@@ -359,12 +359,14 @@ const Home = () => {
                 <MdOutlinePersonAddAlt /> <p className="ml-3"> Invite</p>
               </button>
             </div>
-            <div className="p-2 w-15">
-              <input
-                name="search"
-                placeholder="    searching..."
-                className="w-[30vh] rounded-lg bg-[#101018] p-2 outline-none"
-              />
+            <div className="p-2 mb-1">
+              <a
+                href="https://github.com/shivam1317/Chat-Society/wiki"
+                className="codeDiv px-3 py-2 text-slate-300 hover:text-blue-400 transition-all duration-200 ease-in-out rounded-xl"
+                target={"_blank"}
+              >
+                Need Help?
+              </a>
             </div>
           </div>
           {/* <p className="bg-[#2d2d47] border-2 border-transparent rounded-xl inline px-2">
