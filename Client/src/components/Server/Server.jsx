@@ -15,7 +15,6 @@ import Modal from "../Modal/Modal";
 import { BiSad } from "react-icons/bi";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/scale-extreme.css";
-import "./Server.css";
 import ChannelSkeleton from "../Skeletons/ChannelSkeleton";
 
 const Server = ({ serverName, setMsgflag }) => {
