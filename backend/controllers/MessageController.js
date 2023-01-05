@@ -28,19 +28,6 @@ exports.getMessages = async (req, res, next) => {
   try {
     const { channelId } = req.params;
     let msgs;
-    // if (parseInt(take) && !Number.isNaN(parseInt(take))) {
-    //   msgs = await prisma.message.findMany({
-    //     where: {
-    //       channelId,
-    //     },
-    //     take: parseInt(take || "10"),
-    //     skip: parseInt(take) > 10 ? parseInt(take) - 10 : undefined,
-    //     orderBy: {
-    //       timestamp: "asc",
-    //     },
-    //   });
-    //   console.log("if wala block chaala vai");
-    // } else {
     msgs = await prisma.message.findMany({
       where: {
         channelId,
@@ -49,7 +36,6 @@ exports.getMessages = async (req, res, next) => {
         timestamp: "asc",
       },
     });
-    console.log("else wala block chaala vai");
     let flag = parseInt(take) && !Number.isNaN(parseInt(take));
     const data = {
       msgs: flag ? msgs.slice(-1) : msgs,

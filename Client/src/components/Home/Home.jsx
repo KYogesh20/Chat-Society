@@ -92,8 +92,6 @@ const Home = () => {
       setDisplayMessages(temp);
       setSliceCount(sliceCount - 15);
       let latestMsg = document.getElementById(12);
-      // console.log("Latest msg is");
-      // console.log(latestMsg);
       latestMsg.scrollIntoView({
         block: "start",
       });
@@ -123,13 +121,11 @@ const Home = () => {
 
   useEffect(() => {
     localStorage.removeItem("messages");
-    // console.log("Current correct channelId", channelId);
     fetchAllMsgs();
   }, [channelId]);
 
   useEffect(() => {
     socket.on("received_message", (data) => {
-      // console.log("Message received in channelId", data.channelId);
       fetchOneMessage(data.channelId);
     });
   }, []);
@@ -216,8 +212,6 @@ const Home = () => {
         );
         showServers();
       }
-      // const response = await res.json();
-      // console.log(response);
     } catch (error) {
       console.log(error.message);
     }
