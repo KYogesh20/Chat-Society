@@ -10,6 +10,7 @@ exports.sendMsg = async (messageData) => {
         message: messageData.message,
         author: messageData.author,
         channelName: { connect: { id: messageData.channelId } },
+        type: messageData.type,
       },
     });
     console.log(result);

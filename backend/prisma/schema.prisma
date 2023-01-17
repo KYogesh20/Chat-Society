@@ -18,6 +18,7 @@ model Message{
   channelName Channel @relation(fields: [channelId], references: [id])
   author String
   message String
+  type String
 }
 
 // Model For Channel

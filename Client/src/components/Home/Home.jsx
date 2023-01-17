@@ -26,9 +26,16 @@ import Modal from "../Modal/Modal";
 import HomeSkeleton from "../Skeletons/HomeSkeleton";
 import InviteModal from "../Modal/InviteModal";
 import MessageSkeleton from "../Skeletons/MessageSkeleton";
+import { storage } from "../../firebase-config";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { v4 } from "uuid"; // to make the image filename unique
+import Resizer from "react-image-file-resizer";
 
 const Home = () => {
   // console.log(socket);
+  // for image uploading
+  const [image, setImage] = useState("");
+
   const [servers, setServers] = useState([]);
   const [displayMessages, setDisplayMessages] = useState([]);
   const [sliceCount, setSliceCount] = useState(-15);
@@ -129,14 +136,117 @@ const Home = () => {
       fetchOneMessage(data.channelId);
     });
   }, []);
-  const sendMessage = async () => {
-    if (currentMessage !== "") {
-      const messageData = {
+
+  //=== image compression ===
+  // resize the image and return the base64uri
+  const resizeFile = (file) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        300,
+        400,
+        "WEBP",
+        100,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        "file"
+      );
+    });
+
+  // converts the base64uri into blob
+  const dataURIToBlob = (dataURI) => {
+    const splitDataURI = dataURI.split(",");
+    const byteString =
+      splitDataURI[0].indexOf("base64") >= 0
+        ? atob(splitDataURI[1])
+        : decodeURI(splitDataURI[1]);
+    const mimeString = splitDataURI[0].split(":")[1].split(";")[0];
+
+    const ia = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++)
+      ia[i] = byteString.charCodeAt(i);
+
+    return new Blob([ia], { type: mimeString });
+  };
+  // === image compression ===
+
+  const sendMessage = () => {
+    // console.log(image);
+    let messageData = {};
+    if (image !== "") {
+      // console.log(image);
+      const imageRef = ref(storage, `/Images/${image.name + v4()}`);
+      const uploadTask = uploadBytesResumable(imageRef, image);
+      console.log("image uploading...");
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+          }
+        },
+        (error) => {
+          // A full list of error codes is available at
+          // https://firebase.google.com/docs/storage/web/handle-errors
+          switch (error.code) {
+            case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              break;
+            case "storage/canceled":
+              // User canceled the upload
+              break;
+
+            // ...
+
+            case "storage/unknown":
+              // Unknown error occurred, inspect error.serverResponse
+              break;
+          }
+        },
+        () => {
+          // Upload completed successfully, now we can get the download URL
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            // console.log("File available at", downloadURL);
+            // setImageUrl(downloadURL);
+            messageData = {
+              message: downloadURL,
+              author: displayName,
+              channelId: channelId,
+              timestamp: new Date().toISOString(),
+              type: "image",
+            };
+            // console.log(messageData);
+            socket.emit("send_message", messageData);
+            const allMsg = JSON.parse(localStorage.getItem("messages"));
+            let newList = allMsg?.concat(messageData);
+            setDisplayMessages(newList?.slice(sliceCount));
+            localStorage.setItem("messages", JSON.stringify(newList));
+            setCurrentMessage("");
+            scrollToBottom();
+          });
+        }
+      );
+    } else if (currentMessage !== "") {
+      messageData = {
         message: currentMessage,
         author: displayName,
         channelId: channelId,
         timestamp: new Date().toISOString(),
+        type: "text",
       };
+      console.log(messageData);
       socket.emit("send_message", messageData);
       const allMsg = JSON.parse(localStorage.getItem("messages"));
       let newList = allMsg?.concat(messageData);
@@ -433,7 +543,19 @@ const Home = () => {
                           ).toLocaleTimeString()}`}
                             </div>
                           </div>
-                          <div className="message">{messageData?.message}</div>
+                          {messageData.type === "text" ? (
+                            <div className="message">
+                              {messageData?.message}
+                            </div>
+                          ) : (
+                            <img
+                              width="512"
+                              height="512"
+                              src={messageData?.message}
+                              className="p-3"
+                            />
+                          )}
+                          {/* <div className="message">{messageData?.message}</div> */}
                         </div>
                       </div>
                     </Fragment>
@@ -449,34 +571,77 @@ const Home = () => {
               </div>
             )}
           </div>
-          <div className="chat-footer p-4 text-lg flex-grow ">
+          <div className="chat-footer text-lg flex-grow flex-row">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 sendMessage();
               }}
             >
-              <input
-                type="text"
-                value={currentMessage}
-                // placeholder="Hey..."
-                onChange={(event) => {
-                  setCurrentMessage(event.target.value);
-                }}
-                // ref={inputReference}
-                // onKeyPress={(event) => {
-                //   event.key === "Enter" && sendMessage();
-                // }}
-                name="send-message"
-                disabled={!msgflag}
-                placeholder={
-                  channelInfo.channelName
-                    ? "Message #" + channelInfo.channelName
-                    : "Select a channel"
-                }
-                className="send-message w-full rounded-lg py-2 px-3 bg-[#2d2d47] outline-none"
-              />
-              <input type="submit" hidden={true} />
+              <div className="flex flex-row">
+                <div className="mx-2">
+                  <input
+                    id="actual-btn"
+                    type="file"
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      const fileSize = parseFloat(
+                        file.size / (1024 * 1024)
+                      ).toFixed(0);
+                      if (fileSize < 4) {
+                        setImage(file);
+                      } else {
+                        const resizedImage = await resizeFile(file);
+                        console.log(resizedImage);
+                        setImage(resizedImage);
+                      }
+                    }}
+                    hidden
+                  />
+                  {/* <button className="" onClick={sendMessage}>
+                  +
+                </button> */}
+                  <label for="actual-btn">
+                    <div className="my-5 p-1 bg-[#2d2d47]  rounded-full hover:text-blue-500 transition-all cursor-pointer duration-300 ease-in-out">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                    </div>
+                  </label>
+                </div>
+                <input
+                  type="text"
+                  value={currentMessage}
+                  // placeholder="Hey..."
+                  onChange={(event) => {
+                    setCurrentMessage(event.target.value);
+                  }}
+                  // ref={inputReference}
+                  // onKeyPress={(event) => {
+                  //   event.key === "Enter" && sendMessage();
+                  // }}
+                  name="send-message"
+                  disabled={!msgflag}
+                  placeholder={
+                    channelInfo.channelName
+                      ? "Message #" + channelInfo.channelName
+                      : "Select a channel"
+                  }
+                  className="send-message m-auto mx-2 w-full h-1/2 rounded-lg py-2 px-3 bg-[#2d2d47] outline-none"
+                />
+                <input type="submit" hidden={true} />
+              </div>
             </form>
           </div>
         </div>
