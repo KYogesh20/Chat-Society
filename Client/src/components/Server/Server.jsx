@@ -41,20 +41,6 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
       channelId,
     });
   }, []);
-  const addChannel = async () => {
-    try {
-      const channelName = prompt("Enter channel name");
-      if (channelName) {
-        const res = await axios.post(`${backendURL}/channelapi/createchannel`, {
-          channelName,
-          serverId,
-        });
-      }
-      showChannels();
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
   const showChannels = async () => {
     try {
       if (serverId) {

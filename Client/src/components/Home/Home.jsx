@@ -90,12 +90,16 @@ const Home = () => {
     }
   };
   const fetchOneMessage = async (newChannelId) => {
-    const res = await fetch(`${backendURL}/msgapi/msgs/${newChannelId}?take=1`);
-    const data = await res.json();
-    const allMsg = JSON.parse(localStorage.getItem("messages"));
-    let newList = allMsg?.concat(data?.msgs);
-    setDisplayMessages(newList?.slice(sliceCount));
-    localStorage.setItem("messages", JSON.stringify(newList));
+    if (channelId === newChannelId) {
+      const res = await fetch(
+        `${backendURL}/msgapi/msgs/${newChannelId}?take=1`
+      );
+      const data = await res.json();
+      const allMsg = JSON.parse(localStorage.getItem("messages"));
+      let newList = allMsg?.concat(data?.msgs);
+      setDisplayMessages(newList?.slice(sliceCount));
+      localStorage.setItem("messages", JSON.stringify(newList));
+    }
   };
 
   useEffect(() => {
