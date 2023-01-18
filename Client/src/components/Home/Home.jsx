@@ -32,7 +32,6 @@ import { v4 } from "uuid"; // to make the image filename unique
 import Resizer from "react-image-file-resizer";
 
 const Home = () => {
-  // console.log(socket);
   // for image uploading
   const [image, setImage] = useState("");
 
@@ -52,7 +51,6 @@ const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentMessage, setCurrentMessage] = useState("");
   const { channelId, serverId } = useParams();
-  const [channelIdState, setChannelIdState] = useState(channelId);
   const chatRef = useRef(null);
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const navigate = useNavigate();
@@ -65,20 +63,7 @@ const Home = () => {
       setIsAuthenticated(false);
     }
   });
-  const fetchProjects = async ({ pageParam = 5 }) => {
-    console.log(`pageParam is: ${pageParam}`);
-    console.log(`channelId is: ${channelId}`);
-    const res = await fetch(
-      `${backendURL}/msgapi/msgs/${channelId}?take=${pageParam}`
-    );
-    // console.log(`response ka pradarshan: `);
-    // console.log(res);
-    // return res.json().msgs;
-    const msgs = await res.json();
-    console.log("messages from fetchProjects: ");
-    console.log(msgs);
-    return msgs;
-  };
+
   const fetchAllMsgs = async () => {
     setSliceCount(-15);
     setHasMore(true);
@@ -155,28 +140,11 @@ const Home = () => {
       );
     });
 
-  // converts the base64uri into blob
-  const dataURIToBlob = (dataURI) => {
-    const splitDataURI = dataURI.split(",");
-    const byteString =
-      splitDataURI[0].indexOf("base64") >= 0
-        ? atob(splitDataURI[1])
-        : decodeURI(splitDataURI[1]);
-    const mimeString = splitDataURI[0].split(":")[1].split(";")[0];
-
-    const ia = new Uint8Array(byteString.length);
-    for (let i = 0; i < byteString.length; i++)
-      ia[i] = byteString.charCodeAt(i);
-
-    return new Blob([ia], { type: mimeString });
-  };
   // === image compression ===
 
   const sendMessage = () => {
-    // console.log(image);
     let messageData = {};
     if (image !== "") {
-      // console.log(image);
       const imageRef = ref(storage, `/Images/${image.name + v4()}`);
       const uploadTask = uploadBytesResumable(imageRef, image);
       console.log("image uploading...");
@@ -198,8 +166,6 @@ const Home = () => {
           }
         },
         (error) => {
-          // A full list of error codes is available at
-          // https://firebase.google.com/docs/storage/web/handle-errors
           switch (error.code) {
             case "storage/unauthorized":
               // User doesn't have permission to access the object
@@ -207,9 +173,6 @@ const Home = () => {
             case "storage/canceled":
               // User canceled the upload
               break;
-
-            // ...
-
             case "storage/unknown":
               // Unknown error occurred, inspect error.serverResponse
               break;
@@ -218,8 +181,6 @@ const Home = () => {
         () => {
           // Upload completed successfully, now we can get the download URL
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            // console.log("File available at", downloadURL);
-            // setImageUrl(downloadURL);
             messageData = {
               message: downloadURL,
               author: displayName,
@@ -227,13 +188,12 @@ const Home = () => {
               timestamp: new Date().toISOString(),
               type: "image",
             };
-            // console.log(messageData);
             socket.emit("send_message", messageData);
             const allMsg = JSON.parse(localStorage.getItem("messages"));
             let newList = allMsg?.concat(messageData);
             setDisplayMessages(newList?.slice(sliceCount));
             localStorage.setItem("messages", JSON.stringify(newList));
-            setCurrentMessage("");
+            setImage("");
             scrollToBottom();
           });
         }
@@ -246,7 +206,6 @@ const Home = () => {
         timestamp: new Date().toISOString(),
         type: "text",
       };
-      console.log(messageData);
       socket.emit("send_message", messageData);
       const allMsg = JSON.parse(localStorage.getItem("messages"));
       let newList = allMsg?.concat(messageData);
@@ -293,35 +252,11 @@ const Home = () => {
   const showServers = async () => {
     try {
       let userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      console.log(userInfo);
-      // if (userInfo) {
       const res = await axios.get(
         `${backendURL}/userapi/getserver/${userInfo?.userId}`
       );
       setServers(res.data?.joinedServers);
       setIsLoading(false);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const addServer = async () => {
-    try {
-      const serverName = prompt("Add the server name");
-      if (serverName !== "") {
-        const res = await axios.post(
-          `${backendURL}/api/createserver`,
-          JSON.stringify({
-            Name: serverName,
-          }),
-          {
-            headers: {
-              "content-type": "application/json",
-            },
-          }
-        );
-        showServers();
-      }
     } catch (error) {
       console.log(error.message);
     }
@@ -454,15 +389,6 @@ const Home = () => {
                   ? "#  " + channelInfo.channelName
                   : "Select a chatroom"}
               </p>
-              {/* <p
-                className="ml-5 codeDiv rounded-lg p-2 text-slate-200 hover:text-blue-400 cursor-pointer"
-                onClick={() => {
-                  showCopyToast();
-                  navigator.clipboard.writeText(serverInfo.serverCode);
-                }}
-              >
-                Server Code: {serverInfo.serverCode}
-              </p> */}
               <button
                 className="flex text-slate-200 hover:text-blue-400 transition-all duration-200 ease-in-out codeDiv rounded-lg items-center px-3 py-1 ml-3"
                 onClick={() => setShowInviteModal(true)}
@@ -480,9 +406,6 @@ const Home = () => {
               </a>
             </div>
           </div>
-          {/* <p className="bg-[#2d2d47] border-2 border-transparent rounded-xl inline px-2">
-                Join a channel to show chats
-              </p> */}
           <div
             className="h-[70vh] mx-3 overflow-y-scroll flex flex-col-reverse"
             id="scrollableDiv"
@@ -549,13 +472,12 @@ const Home = () => {
                             </div>
                           ) : (
                             <img
-                              width="512"
-                              height="512"
+                              width={350}
+                              height={200}
                               src={messageData?.message}
-                              className="p-3"
+                              className="p-1"
                             />
                           )}
-                          {/* <div className="message">{messageData?.message}</div> */}
                         </div>
                       </div>
                     </Fragment>
@@ -596,6 +518,7 @@ const Home = () => {
                         setImage(resizedImage);
                       }
                     }}
+                    disabled={!msgflag}
                     hidden
                   />
                   {/* <button className="" onClick={sendMessage}>
