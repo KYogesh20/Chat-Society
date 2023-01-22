@@ -56,11 +56,11 @@ const Home = () => {
   // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
   const [showModal, setShowModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const { serverInfo, setServerInfo } = useContext(ServerContext);
-  const { channelInfo, setChannelInfo } = useContext(ChannelContext);
+  let { serverInfo, setServerInfo } = useContext(ServerContext);
+  let { channelInfo, setChannelInfo } = useContext(ChannelContext);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentMessage, setCurrentMessage] = useState("");
-  const { channelId, serverId } = useParams();
+  let { channelId, serverId } = useParams();
   const chatRef = useRef(null);
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const navigate = useNavigate();
@@ -100,16 +100,16 @@ const Home = () => {
     }
   };
   const fetchOneMessage = async (newChannelId) => {
-    if (channelId === newChannelId) {
-      const res = await fetch(
-        `${backendURL}/msgapi/msgs/${newChannelId}?take=1`
-      );
-      const data = await res.json();
-      const allMsg = JSON.parse(localStorage.getItem("messages"));
-      let newList = allMsg?.concat(data?.msgs);
-      setDisplayMessages(newList?.slice(sliceCount));
-      localStorage.setItem("messages", JSON.stringify(newList));
-    }
+    console.log("Context", channelInfo.channelId);
+    console.log("Param", channelId);
+    // if (channelId === newChannelId) {
+    const res = await fetch(`${backendURL}/msgapi/msgs/${newChannelId}?take=1`);
+    const data = await res.json();
+    const allMsg = JSON.parse(localStorage.getItem("messages"));
+    let newList = allMsg?.concat(data?.msgs);
+    setDisplayMessages(newList?.slice(sliceCount));
+    localStorage.setItem("messages", JSON.stringify(newList));
+    // }
   };
 
   useEffect(() => {
@@ -117,11 +117,15 @@ const Home = () => {
       navigate("/login");
     }
     setTimeout(() => {
-      showServers();
       setServerInfo({
         ...serverInfo,
         serverId,
       });
+      setChannelInfo({
+        ...channelInfo,
+        channelId,
+      });
+      showServers();
     }, 1000);
   }, []);
 
