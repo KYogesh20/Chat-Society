@@ -100,8 +100,6 @@ const Home = () => {
     }
   };
   const fetchOneMessage = async (newChannelId) => {
-    console.log("Context", channelInfo.channelId);
-    console.log("Param", channelId);
     if (channelId === newChannelId) {
       const res = await fetch(
         `${backendURL}/msgapi/msgs/${newChannelId}?take=1`
