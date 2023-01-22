@@ -25,8 +25,8 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
   const { serverInfo } = useContext(ServerContext);
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
-  const serverId = serverInfo.serverId;
-  const { channelId } = useParams();
+  let serverId = serverInfo.serverId;
+  let { channelId } = useParams();
   useEffect(() => {
     setIsLoading(true);
     showChannels();
