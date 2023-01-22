@@ -275,18 +275,17 @@ const Home = () => {
   const updateImage = (image) => {
     console.log(image);
     if (image !== "") {
-      console.log("closeModal triggered");
       const imageRef = ref(storage, `/Images/${image.name + v4()}`);
       const uploadTask = uploadBytesResumable(imageRef, image);
-      console.log("image uploading...");
+      const id = toast.loading("Uploading image..");
       // Listen for state changes, errors, and completion of the upload.
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
+          const progress = parseInt(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
           switch (snapshot.state) {
             case "paused":
               console.log("Upload is paused");
@@ -323,6 +322,13 @@ const Home = () => {
             const allMsg = JSON.parse(localStorage.getItem("messages"));
             let newList = allMsg?.concat(messageData);
             setDisplayMessages(newList?.slice(sliceCount));
+            toast.update(id, {
+              render: "upload successful",
+              type: "success",
+              isLoading: false,
+              autoClose: 2000,
+              closeOnClick: true,
+            });
             localStorage.setItem("messages", JSON.stringify(newList));
             scrollToBottom();
           });
@@ -536,7 +542,7 @@ const Home = () => {
                       const fileSize = parseFloat(
                         file.size / (1024 * 1024)
                       ).toFixed(0);
-                      if (fileSize < 4) {
+                      if (fileSize < 4 && file.type === "image/gif") {
                         console.log("file not resized");
                         console.log(typeof file);
                         setPreviewImage(file);
