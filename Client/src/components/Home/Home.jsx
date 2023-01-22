@@ -22,9 +22,14 @@ import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away-subtle.css";
 import { socket } from "../../IO";
 import InfiniteScroll from "react-infinite-scroll-component";
+
+// === modal imports ===
 import Modal from "../Modal/Modal";
 import HomeSkeleton from "../Skeletons/HomeSkeleton";
 import InviteModal from "../Modal/InviteModal";
+import ImagePreview from "../Modal/ImagePreview";
+
+// =====================
 import MessageSkeleton from "../Skeletons/MessageSkeleton";
 import { storage } from "../../firebase-config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -33,7 +38,12 @@ import Resizer from "react-image-file-resizer";
 
 const Home = () => {
   // for image uploading
-  const [image, setImage] = useState("");
+  // const [image, setImage] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
+  const usrimg = useRef(null);
+
+  // set image preview modal states
+  const [showImagePreviewModal, setShowImagePreviewModal] = useState(false);
 
   const [servers, setServers] = useState([]);
   const [displayMessages, setDisplayMessages] = useState([]);
@@ -147,63 +157,8 @@ const Home = () => {
   // === image compression ===
 
   const sendMessage = () => {
-    let messageData = {};
-    if (image !== "") {
-      const imageRef = ref(storage, `/Images/${image.name + v4()}`);
-      const uploadTask = uploadBytesResumable(imageRef, image);
-      console.log("image uploading...");
-      // Listen for state changes, errors, and completion of the upload.
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
-          }
-        },
-        (error) => {
-          switch (error.code) {
-            case "storage/unauthorized":
-              // User doesn't have permission to access the object
-              break;
-            case "storage/canceled":
-              // User canceled the upload
-              break;
-            case "storage/unknown":
-              // Unknown error occurred, inspect error.serverResponse
-              break;
-          }
-        },
-        () => {
-          // Upload completed successfully, now we can get the download URL
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            messageData = {
-              message: downloadURL,
-              author: displayName,
-              channelId: channelId,
-              timestamp: new Date().toISOString(),
-              type: "image",
-            };
-            socket.emit("send_message", messageData);
-            const allMsg = JSON.parse(localStorage.getItem("messages"));
-            let newList = allMsg?.concat(messageData);
-            setDisplayMessages(newList?.slice(sliceCount));
-            localStorage.setItem("messages", JSON.stringify(newList));
-            setImage("");
-            scrollToBottom();
-          });
-        }
-      );
-    } else if (currentMessage !== "") {
-      messageData = {
+    if (currentMessage !== "") {
+      const messageData = {
         message: currentMessage,
         author: displayName,
         channelId: channelId,
@@ -306,10 +261,75 @@ const Home = () => {
     setShowInviteModal(false);
   };
 
+  const closeImagePreviewModal = () => {
+    setShowImagePreviewModal(false);
+    setPreviewImage(null);
+    // console.log(usrimg.current.value);
+    usrimg.current.value = null;
+  };
+
   useEffect(() => {
     showServers();
   }, [showModal]);
 
+  const updateImage = (image) => {
+    console.log(image);
+    if (image !== "") {
+      console.log("closeModal triggered");
+      const imageRef = ref(storage, `/Images/${image.name + v4()}`);
+      const uploadTask = uploadBytesResumable(imageRef, image);
+      console.log("image uploading...");
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+          }
+        },
+        (error) => {
+          switch (error.code) {
+            case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              break;
+            case "storage/canceled":
+              // User canceled the upload
+              break;
+            case "storage/unknown":
+              // Unknown error occurred, inspect error.serverResponse
+              break;
+          }
+        },
+        () => {
+          // Upload completed successfully, now we can get the download URL
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            const messageData = {
+              message: downloadURL,
+              author: displayName,
+              channelId: channelId,
+              timestamp: new Date().toISOString(),
+              type: "image",
+            };
+            socket.emit("send_message", messageData);
+            const allMsg = JSON.parse(localStorage.getItem("messages"));
+            let newList = allMsg?.concat(messageData);
+            setDisplayMessages(newList?.slice(sliceCount));
+            localStorage.setItem("messages", JSON.stringify(newList));
+            scrollToBottom();
+          });
+        }
+      );
+    }
+  };
   return (
     <>
       <div className="container h-screen">
@@ -509,17 +529,24 @@ const Home = () => {
                   <input
                     id="actual-btn"
                     type="file"
+                    accept="image/png, image/gif, image/jpeg, image/webp"
+                    ref={usrimg}
                     onChange={async (e) => {
                       const file = e.target.files[0];
                       const fileSize = parseFloat(
                         file.size / (1024 * 1024)
                       ).toFixed(0);
                       if (fileSize < 4) {
-                        setImage(file);
+                        console.log("file not resized");
+                        console.log(typeof file);
+                        setPreviewImage(file);
+                        setShowImagePreviewModal(true);
                       } else {
                         const resizedImage = await resizeFile(file);
+                        console.log("file resized");
                         console.log(resizedImage);
-                        setImage(resizedImage);
+                        setPreviewImage(resizedImage);
+                        setShowImagePreviewModal(true);
                       }
                     }}
                     disabled={!msgflag}
@@ -582,6 +609,12 @@ const Home = () => {
           showModal={showInviteModal}
           closeModal={closeInviteModal}
           Code={serverInfo.serverCode}
+        />
+        <ImagePreview
+          showModal={showImagePreviewModal}
+          closeModal={closeImagePreviewModal}
+          previewImage={previewImage}
+          setImage={updateImage}
         />
       </div>
     </>
