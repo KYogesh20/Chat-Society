@@ -264,7 +264,6 @@ const Home = () => {
   const closeImagePreviewModal = () => {
     setShowImagePreviewModal(false);
     setPreviewImage(null);
-    // console.log(usrimg.current.value);
     usrimg.current.value = null;
   };
 
@@ -283,15 +282,14 @@ const Home = () => {
         "state_changed",
         (snapshot) => {
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          const progress = parseInt(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
+          // const progress = parseInt(
+          //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          // );
           switch (snapshot.state) {
             case "paused":
               console.log("Upload is paused");
               break;
             case "running":
-              console.log("Upload is running");
               break;
           }
         },
@@ -542,15 +540,11 @@ const Home = () => {
                       const fileSize = parseFloat(
                         file.size / (1024 * 1024)
                       ).toFixed(0);
-                      if (fileSize < 4 && file.type === "image/gif") {
-                        console.log("file not resized");
-                        console.log(typeof file);
+                      if (fileSize < 4 || file.type === "image/gif") {
                         setPreviewImage(file);
                         setShowImagePreviewModal(true);
                       } else {
                         const resizedImage = await resizeFile(file);
-                        console.log("file resized");
-                        console.log(resizedImage);
                         setPreviewImage(resizedImage);
                         setShowImagePreviewModal(true);
                       }

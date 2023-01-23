@@ -3,15 +3,12 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import "./Modal.css";
 
 const ImagePreview = ({ showModal, closeModal, previewImage, setImage }) => {
-  //   if (showModal) console.log(previewImage);
-  // const handleOnClose = (e) => {
-  //   if (e.target.id === "container") {
-  //     closeModal();
-  //   }
-  // };
+  const handleOnClose = (e) => {
+    if (e.target.id === "container") {
+      closeModal();
+    }
+  };
   const submitData = () => {
-    console.log(typeof previewImage);
-    console.log(typeof setImage);
     setImage(previewImage);
     closeModal();
   };
@@ -27,6 +24,7 @@ const ImagePreview = ({ showModal, closeModal, previewImage, setImage }) => {
       <div
         className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center"
         id="container"
+        onClick={handleOnClose}
       >
         <div className="w-[30%] p-2 bg-[#202036] rounded-lg">
           <div className="flex justify-between items-center w-full px-5 py-2">
