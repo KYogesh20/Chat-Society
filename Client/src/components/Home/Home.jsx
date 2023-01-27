@@ -84,7 +84,6 @@ const Home = () => {
     setMsgLoading(false);
   };
   const fetchNextMessages = () => {
-    console.log("fetchNextMessages got triggered with slice value", sliceCount);
     const allMsg = JSON.parse(localStorage.getItem("messages"));
     let newMsgs = allMsg?.slice(sliceCount - 15, sliceCount);
     if (newMsgs.length === 0) {
@@ -100,12 +99,17 @@ const Home = () => {
     }
   };
   const fetchOneMessage = async (newChannelId) => {
-    const res = await fetch(`${backendURL}/msgapi/msgs/${newChannelId}?take=1`);
-    const data = await res.json();
-    const allMsg = JSON.parse(localStorage.getItem("messages"));
-    let newList = allMsg?.concat(data?.msgs);
-    setDisplayMessages(newList?.slice(sliceCount));
-    localStorage.setItem("messages", JSON.stringify(newList));
+    const currChan = JSON.parse(localStorage.getItem("currChan"));
+    if (currChan === newChannelId) {
+      const res = await fetch(
+        `${backendURL}/msgapi/msgs/${newChannelId}?take=1`
+      );
+      const data = await res.json();
+      const allMsg = JSON.parse(localStorage.getItem("messages"));
+      let newList = allMsg?.concat(data?.msgs);
+      setDisplayMessages(newList?.slice(sliceCount));
+      localStorage.setItem("messages", JSON.stringify(newList));
+    }
   };
 
   useEffect(() => {
@@ -117,16 +121,13 @@ const Home = () => {
         ...serverInfo,
         serverId,
       });
-      setChannelInfo({
-        ...channelInfo,
-        channelId,
-      });
       showServers();
     }, 1000);
   }, []);
 
   useEffect(() => {
     localStorage.removeItem("messages");
+    localStorage.setItem("currChan", JSON.stringify(channelId));
     fetchAllMsgs();
   }, [channelId]);
 
