@@ -256,7 +256,7 @@ const Home = () => {
 
   const OnProfileBtnClick = () => {
     // const uid = JSON.parse(localStorage.getItem("userInfo"));
-    uid && navigate(`/profile/${userInfo.userId}`);
+    navigate(`/profile/${userInfo.userId}`);
   };
 
   const onMsgClick = (authorId) => {
