@@ -15,6 +15,7 @@ const Profile = () => {
     email: "",
     joinedServers: 0,
   });
+  let u = JSON.parse(localStorage.getItem("userInfo"));
   const logoutUser = () => {
     const id = toast.loading("Logging out...");
     signOut(auth)
@@ -56,12 +57,6 @@ const Profile = () => {
     <>
       <div className="flex flex-col my-10 justify-center items-center w-[100%] h-[100%]">
         <div className="w-[50%]">
-          {/* <div className="banner">
-            <img
-              src="https://picsum.photos/seed/picsum/200/300"
-              className="w-[100%] h-14 bg-fixed"
-            />
-          </div> */}
           <div className="flex mx-2 my-2 items-center justify-between">
             <div className="flex items-center">
               <button className="transition-all rounded-full p-2 bg-slate-800 h-20 w-20 flex justify-center items-center">
@@ -75,12 +70,14 @@ const Profile = () => {
                 </p>
               </div>
             </div>
-            <button
-              className="rounded-lg px-4 py-1 bg-red-900/30 hover:bg-red-900/50 transition-all duration-150 ease-in-out text-red-500"
-              onClick={logoutUser}
-            >
-              Logout
-            </button>
+            {u.userId === id ? (
+              <button
+                className="rounded-lg px-4 py-1 bg-red-900/30 hover:bg-red-900/50 transition-all duration-150 ease-in-out text-red-500"
+                onClick={logoutUser}
+              >
+                Logout
+              </button>
+            ) : null}
           </div>
           <div className="my-5 bg-gray-800/30 rounded-lg">
             <div className="px-3 py-2">
