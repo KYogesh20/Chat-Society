@@ -4,11 +4,12 @@ import { auth } from "../../firebase-config";
 import { signOut } from "firebase/auth";
 import { FiUser } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Profile = () => {
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const navigate = useNavigate();
+  const { id } = useParams();
   const [info, setInfo] = useState({
     username: "",
     email: "",
@@ -44,9 +45,7 @@ const Profile = () => {
       });
   };
   useEffect(async () => {
-    const uid = JSON.parse(localStorage.getItem("userInfo"));
-    const res = await axios.get(backendURL + `/userapi/getuser/${uid.userId}`);
-    console.log(res.data);
+    const res = await axios.get(backendURL + `/userapi/getuser/${id}`);
     setInfo({
       username: res.data.Name,
       email: res.data.Email,
