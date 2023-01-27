@@ -6,7 +6,7 @@ import { AiOutlineHome, AiFillHome } from "react-icons/ai";
 import { signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { auth } from "../../firebase-config";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
@@ -116,6 +116,12 @@ const Home = () => {
     if (!isAuthenticated) {
       navigate("/login");
     }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
     setTimeout(() => {
       setServerInfo({
         ...serverInfo,
@@ -174,39 +180,6 @@ const Home = () => {
       setCurrentMessage("");
       scrollToBottom();
     }
-  };
-
-  const logoutUser = () => {
-    const id = toast.loading("Logging out...");
-    signOut(auth)
-      .then(() => {
-        console.log("signed out successfully...");
-        console.log(isAuthenticated);
-        toast.update(id, {
-          render: "Logout successful..",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          theme: "dark",
-        });
-        setIsAuthenticated(false);
-        localStorage.clear();
-        navigate("/login");
-      })
-      .catch((e) => {
-        toast.error("Some error occured", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          theme: "dark",
-        });
-        console.log(e.message);
-      });
   };
 
   const showServers = async () => {
@@ -271,6 +244,11 @@ const Home = () => {
   useEffect(() => {
     showServers();
   }, [showModal]);
+
+  const OnProfileBtnClick = () => {
+    const uid = JSON.parse(localStorage.getItem("userInfo"));
+    uid && navigate(`/profile/${uid.userId}`);
+  };
 
   const updateImage = (image) => {
     console.log(image);
@@ -393,8 +371,7 @@ const Home = () => {
           <div className="mt-auto flex justify-center flex-col items-center">
             {/* <p className="text-xs">{displayName}</p> */}
             <button
-              onClick={logoutUser}
-              data-background={"green"}
+              onClick={OnProfileBtnClick}
               className={`transition-all rounded-full p-2 bg-slate-800`}
               id="profile"
             >
