@@ -44,7 +44,10 @@ const Home = () => {
 
   // set image preview modal states
   const [showImagePreviewModal, setShowImagePreviewModal] = useState(false);
-
+  const [userInfo, setUserInfo] = useState({
+    userName: "",
+    userId: "",
+  });
   const [servers, setServers] = useState([]);
   const [displayMessages, setDisplayMessages] = useState([]);
   const [sliceCount, setSliceCount] = useState(-15);
@@ -73,6 +76,11 @@ const Home = () => {
       setIsAuthenticated(false);
     }
   });
+
+  useEffect(() => {
+    const u = JSON.parse(localStorage.getItem("userInfo"));
+    setUserInfo(u);
+  }, []);
 
   const fetchAllMsgs = async () => {
     setSliceCount(-15);
@@ -168,6 +176,7 @@ const Home = () => {
       const messageData = {
         message: currentMessage,
         author: displayName,
+        authorId: userInfo.userId,
         channelId: channelId,
         timestamp: new Date().toISOString(),
         type: "text",
@@ -246,8 +255,12 @@ const Home = () => {
   }, [showModal]);
 
   const OnProfileBtnClick = () => {
-    const uid = JSON.parse(localStorage.getItem("userInfo"));
-    uid && navigate(`/profile/${uid.userId}`);
+    // const uid = JSON.parse(localStorage.getItem("userInfo"));
+    uid && navigate(`/profile/${userInfo.userId}`);
+  };
+
+  const onMsgClick = (authorId) => {
+    navigate(`/profile/${authorId}`);
   };
 
   const updateImage = (image) => {
@@ -437,7 +450,8 @@ const Home = () => {
                     <Fragment key={i}>
                       <div className="flex">
                         <div
-                          className={`mt-2 bg-[#2d2d47] p-2 rounded-full h-fit`}
+                          className={`mt-2 bg-[#2d2d47] p-2 rounded-full h-fit cursor-pointer`}
+                          onClick={() => onMsgClick(messageData.authorId)}
                         >
                           <FiUser size={"1.2rem"} />
                         </div>
