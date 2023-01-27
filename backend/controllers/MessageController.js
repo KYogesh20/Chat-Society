@@ -2,13 +2,14 @@ const prisma = require("../prisma/index");
 exports.sendMsg = async (messageData) => {
   try {
     console.log(
-      `author : ${messageData.author} | message : ${messageData.message} | channelId: ${messageData.channelId}`
+      `author : ${messageData.author} | message : ${messageData.message} | channelId: ${messageData.channelId} | authorId: ${messageData.authorId}`
     );
     // const { message, channelId, author } = req.body;
     const result = await prisma.message.create({
       data: {
         message: messageData.message,
         author: messageData.author,
+        authorId: messageData.authorId,
         channelName: { connect: { id: messageData.channelId } },
         type: messageData.type,
       },

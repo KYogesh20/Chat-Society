@@ -37,7 +37,6 @@ io.on("connection", (socket) => {
   socket.on("send_message", async (data) => {
     await sendMsg(data);
     // module.exports = data;
-    console.log("message received!!!");
     socket.broadcast.emit("received_message", {
       data: "message received!!!",
       channelId: data.channelId,
@@ -83,7 +82,7 @@ app.use(function (err, req, res, next) {
 //   // await prisma.message.deleteMany({});
 //   // await prisma.server.deleteMany({});
 //   // await prisma.channel.deleteMany({});
-//   console.log("Deleted!");
+//   // console.log("Deleted!");
 // };
 // deleteData();
 server.listen(process.env.PORT || 5000);

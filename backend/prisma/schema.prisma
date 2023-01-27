@@ -17,6 +17,7 @@ model Message{
   timestamp DateTime @default(now())
   channelName Channel @relation(fields: [channelId], references: [id])
   author String
+  authorId String
   message String
   type String
 }
