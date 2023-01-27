@@ -304,6 +304,7 @@ const Home = () => {
             const messageData = {
               message: downloadURL,
               author: displayName,
+              authorId: userInfo.userId,
               channelId: channelId,
               timestamp: new Date().toISOString(),
               type: "image",
