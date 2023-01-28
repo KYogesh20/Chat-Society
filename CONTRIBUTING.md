@@ -4,6 +4,11 @@
 
 Welcome to the Chat-Society project!. We appreciate your interest in this project, so before making a contribution, please read this.
 
+## How to contribute?
+
+- Please get yourself assigned first on any issue by commenting on that issue so that we can confirm that you are working on specific issue.
+- If you don't find related issue then please raise an [issue](https://github.com/KYogesh20/Chat-Society/issues) and tell us what you want to contribute and we will assign it to you 🚀.
+
 ## Reporting Issues
 If you have found what you think is a bug, please file an [issue](https://github.com/KYogesh20/Chat-Society/issues). 
 
