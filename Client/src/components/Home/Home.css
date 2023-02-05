@@ -22,7 +22,7 @@
   background-color: #161625;
   display: grid;
   grid-template-columns: 0.7fr 2fr 10fr;
-  width: 100vw;
+  width: 100%;
 }
 .channels {
   background-color: #1e1e30;
