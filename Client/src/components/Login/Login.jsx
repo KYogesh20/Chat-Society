@@ -156,9 +156,20 @@ const Login = () => {
   return (
     <>
       <div className="loginBody">
+        <div className="w-[40%] relative">
+          <img src="./images/Login/shape.svg" alt="shape" />
+          <div className="absolute top-44 left-20">
+            <h1 className="text-4xl text-gray-300 my-3 font-bold">
+              Welcome back!
+            </h1>
+            <p className="text-md text-gray-400 my-2">
+              Please Login with your Email and Password
+            </p>
+          </div>
+        </div>
         <form className="flex-col loginContainer p-5">
           <input
-            className="my-3 outline-none p-2 bg-[#1e1e30] text-center input font-bold"
+            className="my-3 outline-none p-2 bg-[#1e1e30] text-center input font-semibold text-gray-200"
             name="email"
             type="email"
             placeholder="Email"
@@ -166,7 +177,7 @@ const Login = () => {
             value={userDetails.email}
           />
           <input
-            className="my-3 outline-none p-2 bg-[#1e1e30] text-center input font-bold"
+            className="my-3 outline-none p-2 bg-[#1e1e30] text-center input font-semibold text-gray-200"
             name="password"
             placeholder="Password"
             type="password"
@@ -175,7 +186,7 @@ const Login = () => {
           />
           <div>
             <button
-              className="outline-none my-3 bg-white text-[#1e1e30] hover:bg-[#1e1e30] hover:text-white p-3 w-40 rounded-xl hover:border-white border-2 font-bold transition-all"
+              className="outline-none my-3 bg-gray-100 text-[#1e1e30] hover:bg-[#1e1e30] hover:text-gray-200 py-1 px-3 w-40 rounded-lg hover:border-gray-300 border-2 font-semibold transition-all"
               name="submit"
               type="submit"
               onClick={submitForm}
@@ -185,13 +196,17 @@ const Login = () => {
             <ToastContainer />
             {/* <button className="outline-none">Signup</button> */}
           </div>
-          <hr className="border-dashed border-white w-full" />
+          <div className="w-full flex items-center">
+            <p className="w-[40%] h-[1px] bg-gray-400"></p>
+            <p className="w-[20%] text-center text-gray-400">OR</p>
+            <p className="w-[40%] h-[1px] bg-gray-400"></p>
+          </div>
           <div className="flex justify-evenly flex-col items-center">
             <button
-              className="outline-none my-3 bg-white text-[#1e1e30] hover:bg-[#1e1e30] hover:text-white p-4  rounded-xl hover:border-white border-2 font-bold transition-all"
+              className="outline-none my-3 bg-gray-100 text-[#1e1e30] hover:bg-[#1e1e30] hover:text-gray-200 w-40 py-2 px-3 rounded-lg hover:border-gray-300 border-2 font-semibold transition-all"
               onClick={googleLogin}
             >
-              Login with{" "}
+              Continue with{" "}
               <img
                 src="/images/google.svg"
                 alt="google"
@@ -203,7 +218,7 @@ const Login = () => {
             Not registered?{" "}
             <NavLink
               to="/register"
-              className="hover:text-blue-800 text-blue-500"
+              className="hover:text-blue-600 text-blue-500"
             >
               Register
             </NavLink>

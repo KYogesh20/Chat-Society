@@ -329,7 +329,7 @@ const Home = () => {
   };
   return (
     <>
-      <div className="container h-screen">
+      <div className="container h-screen scrollbar-hide">
         <div className="p-3 border border-gray-600  flex flex-col justify-center items-center h-full">
           <img src={brand_image} alt="chat-society" className="w-14 h-14" />
           <div className="flex  items-center flex-col overflow-y-scroll scrollbar-hide h-[70vh] my-3">
@@ -401,7 +401,7 @@ const Home = () => {
             setMsgLoading={setMsgLoading}
           />
         </div>
-        <div className="chat-body w-full ">
+        <div className="chat-body w-full">
           <div className="chat-body-header justify-between items-center h-fit pt-3">
             <div className="p-2 flex items-center mb-2">
               <p className="text-lg my-auto text-slate-200 ml-5">
