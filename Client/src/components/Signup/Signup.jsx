@@ -192,7 +192,7 @@ const Signup = () => {
   return (
     <>
       <div className="loginBody">
-        <div className="w-[40%] relative">
+        <div className="w-[30rem] relative">
           <img src="./images/Login/shape2.svg" alt="shape" />
           <div className="absolute top-48 left-28">
             <h1 className="text-4xl text-gray-300 my-3 font-bold">

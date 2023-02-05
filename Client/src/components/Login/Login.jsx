@@ -156,7 +156,7 @@ const Login = () => {
   return (
     <>
       <div className="loginBody">
-        <div className="w-[40%] relative">
+        <div className="w-[30rem] relative">
           <img src="./images/Login/shape.svg" alt="shape" />
           <div className="absolute top-44 left-20">
             <h1 className="text-4xl text-gray-300 my-3 font-bold">
@@ -167,7 +167,7 @@ const Login = () => {
             </p>
           </div>
         </div>
-        <form className="flex-col loginContainer p-5">
+        <form className="flex-col loginContainer p-5 w-[60%]">
           <input
             className="my-3 outline-none p-2 bg-[#1e1e30] text-center input font-semibold text-gray-200"
             name="email"
