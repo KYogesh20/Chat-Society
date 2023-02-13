@@ -78,14 +78,16 @@ const Login = () => {
       };
       // preserve the userInfo state
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
-      toast.update(id, {
-        render: "Login successful",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
-        closeOnClick: true,
-      });
-      navigate("/dashboard");
+      if (localStorage.getItem("userInfo") !== null) {
+        toast.update(id, {
+          render: "Login successful",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+          closeOnClick: true,
+        });
+        navigate("/dashboard");
+      }
     } catch (error) {
       toast.update(id, {
         render: "Invalid email or password..",

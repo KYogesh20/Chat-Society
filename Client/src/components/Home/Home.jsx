@@ -44,10 +44,7 @@ const Home = () => {
 
   // set image preview modal states
   const [showImagePreviewModal, setShowImagePreviewModal] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    userName: "",
-    userId: "",
-  });
+  const [userInfo, setUserInfo] = useState(null);
   const [servers, setServers] = useState([]);
   const [displayMessages, setDisplayMessages] = useState([]);
   const [sliceCount, setSliceCount] = useState(-15);
@@ -56,6 +53,7 @@ const Home = () => {
   const [msgLoading, setMsgLoading] = useState(false);
   const [msgflag, setMsgflag] = useState(false);
   // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
+  const [displayName, setDisplayName] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   let { serverInfo, setServerInfo } = useContext(ServerContext);
@@ -69,6 +67,7 @@ const Home = () => {
   onAuthStateChanged(auth, (currUser) => {
     if (currUser) {
       // setPhotoURL(currUser.photoURL);
+      setDisplayName(auth.currentUser.displayName);
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
@@ -76,11 +75,10 @@ const Home = () => {
   });
 
   useEffect(() => {
-    const u = JSON.parse(localStorage.getItem("userInfo"));
-    setUserInfo({
-      userName: u.Name,
-      userId: u.userId,
-    });
+    setTimeout(() => {
+      const u = JSON.parse(localStorage.getItem("userInfo"));
+      setUserInfo(u);
+    }, 500);
   }, []);
 
   const fetchAllMsgs = async () => {
@@ -224,7 +222,7 @@ const Home = () => {
   };
   // Tooltip for profile pic
   tippy("#profile", {
-    content: userInfo.userName,
+    content: displayName,
     animation: "scale-extreme",
   });
 
