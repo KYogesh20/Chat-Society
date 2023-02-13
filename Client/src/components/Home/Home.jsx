@@ -54,7 +54,6 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [msgLoading, setMsgLoading] = useState(false);
-  const [displayName, setDisplayName] = useState("");
   const [msgflag, setMsgflag] = useState(false);
   // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
   const [showModal, setShowModal] = useState(false);
@@ -69,7 +68,6 @@ const Home = () => {
   const navigate = useNavigate();
   onAuthStateChanged(auth, (currUser) => {
     if (currUser) {
-      setDisplayName(currUser.displayName);
       // setPhotoURL(currUser.photoURL);
       setIsAuthenticated(true);
     } else {
@@ -79,7 +77,10 @@ const Home = () => {
 
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem("userInfo"));
-    setUserInfo(u);
+    setUserInfo({
+      userName: u.Name,
+      userId: u.userId,
+    });
   }, []);
 
   const fetchAllMsgs = async () => {
@@ -175,7 +176,7 @@ const Home = () => {
     if (currentMessage !== "") {
       const messageData = {
         message: currentMessage,
-        author: displayName,
+        author: userInfo.userName,
         authorId: userInfo.userId,
         channelId: channelId,
         timestamp: new Date().toISOString(),
@@ -223,7 +224,7 @@ const Home = () => {
   };
   // Tooltip for profile pic
   tippy("#profile", {
-    content: displayName,
+    content: userInfo.userName,
     animation: "scale-extreme",
   });
 
@@ -303,7 +304,7 @@ const Home = () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             const messageData = {
               message: downloadURL,
-              author: displayName,
+              author: userInfo.userName,
               authorId: userInfo.userId,
               channelId: channelId,
               timestamp: new Date().toISOString(),
@@ -383,7 +384,6 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-auto flex justify-center flex-col items-center">
-            {/* <p className="text-xs">{displayName}</p> */}
             <button
               onClick={OnProfileBtnClick}
               className={`transition-all rounded-full p-2 bg-slate-800`}
@@ -458,7 +458,7 @@ const Home = () => {
                         </div>
                         <div
                           className={`messageCard flex flex-col border-2 border-[#16161e] rounded-r-[0.9rem] rounded-bl-[0.9rem] ${
-                            displayName === messageData?.author
+                            userInfo.userName === messageData?.author
                               ? "bg-[#27273e]"
                               : "bg-[#1E1E30]"
                           } mt-2 p-2 w-fit`}
@@ -467,7 +467,7 @@ const Home = () => {
                         >
                           <div className="metaData text-[#c0caf5] pb-2 text-[0.7rem] flex justify-between items-center">
                             <div className="text-[1rem]">
-                              {displayName === messageData?.author
+                              {userInfo.userName === messageData?.author
                                 ? "You"
                                 : messageData?.author}
                             </div>

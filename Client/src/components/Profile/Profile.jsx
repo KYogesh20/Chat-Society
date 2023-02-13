@@ -4,17 +4,22 @@ import { auth } from "../../firebase-config";
 import { signOut } from "firebase/auth";
 import { FiUser } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, NavLink } from "react-router-dom";
+import Updateuser from "../Modal/Updateuser";
 
 const Profile = () => {
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const navigate = useNavigate();
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const { id } = useParams();
   const [info, setInfo] = useState({
     username: "",
     email: "",
     joinedServers: 0,
   });
+  const closeUpdateModal = () => {
+    setShowUpdateModal(false);
+  };
   let u = JSON.parse(localStorage.getItem("userInfo"));
   const logoutUser = () => {
     const id = toast.loading("Logging out...");
@@ -70,19 +75,34 @@ const Profile = () => {
                 </p>
               </div>
             </div>
-            {u.userId === id ? (
-              <button
-                className="rounded-lg px-4 py-1 bg-red-900/30 hover:bg-red-900/50 transition-all duration-150 ease-in-out text-red-500"
-                onClick={logoutUser}
-              >
-                Logout
-              </button>
-            ) : null}
+            <div className="flex">
+              <NavLink to="/dashboard">
+                <button className="py-2 px-3 mx-3 bg-gray-700/40 text-gray-300 hover:bg-gray-700/60 transition-all duration-100 ease-in-out rounded-md">
+                  Dashboard
+                </button>
+              </NavLink>
+              {u.userId === id ? (
+                <button
+                  className="rounded-lg px-4 py-1 bg-red-900/30 hover:bg-red-900/50 transition-all duration-150 ease-in-out text-red-500"
+                  onClick={logoutUser}
+                >
+                  Logout
+                </button>
+              ) : null}
+            </div>
           </div>
           <div className="my-5 bg-gray-800/30 rounded-lg">
-            <div className="px-3 py-2">
-              <p className="font-semibold text-gray-400 my-1">Username</p>
-              <p className="text-gray-200 my-1">{info.username}</p>
+            <div className="px-3 py-2 flex justify-between items-center">
+              <div>
+                <p className="font-semibold text-gray-400 my-1">Username</p>
+                <p className="text-gray-200 my-1">{info.username}</p>
+              </div>
+              <button
+                className="py-1 px-5 bg-gray-700/40 text-gray-300 hover:bg-gray-700/60 transition-all duration-100 ease-in-out rounded-md"
+                onClick={() => setShowUpdateModal(true)}
+              >
+                Edit
+              </button>
             </div>
             <div className="px-3 py-2">
               <p className="font-semibold text-gray-400 my-1">Email</p>
@@ -91,6 +111,7 @@ const Profile = () => {
           </div>
         </div>
         <ToastContainer />
+        <Updateuser closeModal={closeUpdateModal} showModal={showUpdateModal} />
       </div>
     </>
   );
