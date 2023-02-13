@@ -24,6 +24,23 @@ exports.addUser = async (req, res, next) => {
   }
 };
 
+exports.editUser = async (req, res, next) => {
+  try {
+    const { Name, id } = req.body;
+    const result = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        Name,
+      },
+    });
+    res.json(result);
+  } catch (error) {
+    res.json(error.message);
+  }
+};
+
 exports.getJoinedServers = async (req, res, next) => {
   try {
     const { id } = req.params;
