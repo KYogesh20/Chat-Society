@@ -87,12 +87,7 @@ const Signup = () => {
       // console.log("trying user auth");
 
       const user = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(auth.currentUser, {
-        displayName: username,
-        // photoURL:
-        //   auth.currentUser.photoURL ||
-        //   colors[Math.floor(Math.random() * array.length)],
-      });
+
       const res = await axios.post(backendURL + "/userapi/adduser", {
         Email: email,
         Name: username,
@@ -103,6 +98,12 @@ const Signup = () => {
       };
       // preserve the userInfo state
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      await updateProfile(auth.currentUser, {
+        displayName: username,
+        // photoURL:
+        //   auth.currentUser.photoURL ||
+        //   colors[Math.floor(Math.random() * array.length)],
+      });
       setServerInfo({
         serverName: null,
         serverId: null,

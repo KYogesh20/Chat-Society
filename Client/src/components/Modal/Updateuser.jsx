@@ -31,18 +31,27 @@ const Updateuser = ({ showModal, closeModal }) => {
           closeOnClick: true,
         });
       } else {
+        // update user in localStorage state
         const newuser = {
-          Name: name,
           userId: userInfo.userId,
+          userName: name,
         };
         localStorage.setItem("userInfo", JSON.stringify(newuser));
-        let res = await axios.put(backendURL + "/userapi/updateuser/", {
+        // update user in DB
+        let res = await axios.put(backendURL + "/userapi/updateuser", {
           id: userInfo.userId,
           Name: name,
         });
-        await updateProfile(auth.currentUser, {
+        // update user in firebase
+        updateProfile(auth.currentUser, {
           displayName: name,
-        });
+        })
+          .then(() => {
+            console.log("Profile updated!");
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
         closeModal();
         toast.update(id, {
           render: "Username updated successfully!",
