@@ -177,6 +177,7 @@ const Home = () => {
         author: userInfo.userName,
         authorId: userInfo.userId,
         channelId: channelId,
+        api_secret: import.meta.env.VITE_APP_API_SECRET,
         timestamp: new Date().toISOString(),
         type: "text",
       };
@@ -305,6 +306,7 @@ const Home = () => {
               author: userInfo.userName,
               authorId: userInfo.userId,
               channelId: channelId,
+              api_secret: import.meta.env.VITE_APP_API_SECRET,
               timestamp: new Date().toISOString(),
               type: "image",
             };

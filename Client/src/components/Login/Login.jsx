@@ -71,6 +71,7 @@ const Login = () => {
       const res = await axios.post(backendURL + "/userapi/adduser", {
         Email: user.user.email,
         Name: user.user.displayName,
+        api_secret: import.meta.env.VITE_APP_API_SECRET,
       });
       let userInfo = {
         userName: res.data?.Name,
@@ -111,6 +112,7 @@ const Login = () => {
       const res = await axios.post(backendURL + "/userapi/adduser", {
         Email: userDetail.user.email,
         Name: userDetail.user.displayName,
+        api_secret: import.meta.env.VITE_APP_API_SECRET,
       });
       let userInfo = {
         userName: res.data?.Name,

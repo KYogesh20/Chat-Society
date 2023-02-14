@@ -41,6 +41,7 @@ const Updateuser = ({ showModal, closeModal }) => {
         let res = await axios.put(backendURL + "/userapi/updateuser", {
           id: userInfo.userId,
           Name: name,
+          api_secret: import.meta.env.VITE_APP_API_SECRET,
         });
         // // update user in firebase
         // updateProfile(auth.currentUser, {
