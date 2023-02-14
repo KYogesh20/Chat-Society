@@ -97,12 +97,14 @@ const Profile = () => {
                 <p className="font-semibold text-gray-400 my-1">Username</p>
                 <p className="text-gray-200 my-1">{info.username}</p>
               </div>
-              <button
-                className="py-1 px-5 bg-gray-700/40 text-gray-300 hover:bg-gray-700/60 transition-all duration-100 ease-in-out rounded-md"
-                onClick={() => setShowUpdateModal(true)}
-              >
-                Edit
-              </button>
+              {u.userId === id ? (
+                <button
+                  className="py-1 px-5 bg-gray-700/40 text-gray-300 hover:bg-gray-700/60 transition-all duration-100 ease-in-out rounded-md"
+                  onClick={() => setShowUpdateModal(true)}
+                >
+                  Edit
+                </button>
+              ) : null}
             </div>
             <div className="px-3 py-2">
               <p className="font-semibold text-gray-400 my-1">Email</p>
