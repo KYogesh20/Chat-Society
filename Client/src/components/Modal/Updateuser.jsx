@@ -42,16 +42,16 @@ const Updateuser = ({ showModal, closeModal }) => {
           id: userInfo.userId,
           Name: name,
         });
-        // update user in firebase
-        updateProfile(auth.currentUser, {
-          displayName: name,
-        })
-          .then(() => {
-            console.log("Profile updated!");
-          })
-          .catch((e) => {
-            console.log(e.message);
-          });
+        // // update user in firebase
+        // updateProfile(auth.currentUser, {
+        //   displayName: name,
+        // })
+        //   .then(() => {
+        //     console.log("Profile updated!");
+        //   })
+        //   .catch((e) => {
+        //     console.log(e.message);
+        //   });
         closeModal();
         toast.update(id, {
           render: "Username updated successfully!",
