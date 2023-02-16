@@ -101,7 +101,7 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
             return <ChannelSkeleton />;
           })
         ) : channels.length === 0 ? (
-          <div className="w-full text-gray-300 text-center flex flex-col justify-center items-center p-3 bg-gray-700 rounded-lg">
+          <div className="w-full text-gray-400 text-center flex flex-col justify-center items-center p-3 bg-gray-700/40 rounded-lg">
             <div className="my-2">You Don't have any rooms in your house</div>
             <BiSad size={"2rem"} />
             <p className="my-2">
