@@ -70,8 +70,9 @@ const Profile = () => {
               <div className="mx-4 flex flex-col">
                 <p className="text-xl text-gray-200">{info.username}</p>
                 <p className="text-md text-gray-400">
-                  Joined Servers:{" "}
-                  <span className="text-slate-300">{info.joinedServers}</span>
+                  Member of{" "}
+                  <span className="text-slate-300">{info.joinedServers}</span>{" "}
+                  Houses
                 </p>
               </div>
             </div>

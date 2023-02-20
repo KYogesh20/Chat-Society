@@ -3,18 +3,16 @@ import "./Home.css";
 import brand_image from "../../../public/images/index/brand_icon.png";
 import { FiUser } from "react-icons/fi";
 import { AiOutlineHome, AiFillHome } from "react-icons/ai";
-import { signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { auth } from "../../firebase-config";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import { collection, addDoc } from "firebase/firestore";
 import { useContext } from "react";
 import { ChannelContext } from "../Contexts/ChannelContext";
 import { ServerContext } from "../Contexts/ServerContext";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import Server from "../Server/Server";
 import axios from "axios";
 import tippy from "tippy.js";
@@ -29,7 +27,6 @@ import HomeSkeleton from "../Skeletons/HomeSkeleton";
 import InviteModal from "../Modal/InviteModal";
 import ImagePreview from "../Modal/ImagePreview";
 
-// =====================
 import MessageSkeleton from "../Skeletons/MessageSkeleton";
 import { storage } from "../../firebase-config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -37,31 +34,33 @@ import { v4 } from "uuid"; // to make the image filename unique
 import Resizer from "react-image-file-resizer";
 
 const Home = () => {
-  // for image uploading
-  // const [image, setImage] = useState("");
-  const [previewImage, setPreviewImage] = useState(null);
+  // Refs
   const usrimg = useRef(null);
-
-  // set image preview modal states
-  const [showImagePreviewModal, setShowImagePreviewModal] = useState(false);
+  const chatRef = useRef(null);
+  // Local states
+  const [previewImage, setPreviewImage] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [servers, setServers] = useState([]);
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [displayMessages, setDisplayMessages] = useState([]);
   const [sliceCount, setSliceCount] = useState(-15);
+  // Loaders
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [msgLoading, setMsgLoading] = useState(false);
   const [msgflag, setMsgflag] = useState(false);
   // const [photoURL, setPhotoURL] = useState("bg-[#2d2d47]");
   const [displayName, setDisplayName] = useState("");
+  // Modal States
+  const [showImagePreviewModal, setShowImagePreviewModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  // Context API states
   let { serverInfo, setServerInfo } = useContext(ServerContext);
   let { channelInfo, setChannelInfo } = useContext(ChannelContext);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [currentMessage, setCurrentMessage] = useState("");
+  // Params
   let { channelId, serverId } = useParams();
-  const chatRef = useRef(null);
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   const navigate = useNavigate();
   onAuthStateChanged(auth, (currUser) => {
@@ -77,7 +76,19 @@ const Home = () => {
   useEffect(() => {
     setTimeout(() => {
       const u = JSON.parse(localStorage.getItem("userInfo"));
-      setUserInfo(u);
+      // Check if userInfo is present in localStorage or not
+      if (u) {
+        setUserInfo(u);
+      } else {
+        signOut(auth)
+          .then(() => {
+            localStorage.clear();
+            navigate("/login");
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
+      }
     }, 500);
   }, []);
 
@@ -87,7 +98,7 @@ const Home = () => {
     const res = await fetch(`${backendURL}/msgapi/msgs/${channelId}`);
     const data = await res.json();
     localStorage.setItem("messages", JSON.stringify(data?.msgs));
-    setDisplayMessages(data?.msgs.slice(-15));
+    setDisplayMessages(data?.msgs?.slice(-15));
     setMsgLoading(false);
   };
   const fetchNextMessages = () => {
@@ -211,7 +222,6 @@ const Home = () => {
       serverCode: servercode,
     });
     setMsgflag(false);
-    // localStorage.removeItem("messages");
     navigate(`/dashboard/${serverid}`);
   };
 
@@ -221,11 +231,6 @@ const Home = () => {
       block: "start",
     });
   };
-  // Tooltip for profile pic
-  tippy("#profile", {
-    content: displayName,
-    animation: "scale-extreme",
-  });
 
   const showTippy = (serverId, serverName) => {
     tippy(`#s${serverId}`, {
@@ -255,7 +260,6 @@ const Home = () => {
   }, [showModal]);
 
   const OnProfileBtnClick = () => {
-    // const uid = JSON.parse(localStorage.getItem("userInfo"));
     navigate(`/profile/${userInfo.userId}`);
   };
 
@@ -264,7 +268,6 @@ const Home = () => {
   };
 
   const updateImage = (image) => {
-    console.log(image);
     if (image !== "") {
       const imageRef = ref(storage, `/Images/${image.name + v4()}`);
       const uploadTask = uploadBytesResumable(imageRef, image);
@@ -334,10 +337,6 @@ const Home = () => {
         <div className="p-3 border border-gray-600  flex flex-col justify-center items-center h-full">
           <img src={brand_image} alt="chat-society" className="w-14 h-14" />
           <div className="flex  items-center flex-col overflow-y-scroll scrollbar-hide h-[70vh] my-3">
-            {/* <button className="border-2 border-green-500 rounded w-10 h-10 ml-3">
-                +
-              </button> */}
-
             {!isLoading
               ? servers?.map((server, ind) => {
                   return (
@@ -360,8 +359,8 @@ const Home = () => {
                     </div>
                   );
                 })
-              : [1, 2, 3, 4, 5].map(() => {
-                  return <HomeSkeleton />;
+              : [1, 2, 3, 4, 5].map((e) => {
+                  return <HomeSkeleton key={e} />;
                 })}
             <div
               className="my-5 p-3 bg-slate-800  rounded-full hover:text-blue-500 transition-all cursor-pointer duration-300 ease-in-out"
@@ -387,7 +386,6 @@ const Home = () => {
             <button
               onClick={OnProfileBtnClick}
               className={`transition-all rounded-full p-2 bg-slate-800`}
-              id="profile"
             >
               <ToastContainer />
               <FiUser size={"1.7rem"} />
@@ -431,8 +429,8 @@ const Home = () => {
             id="scrollableDiv"
           >
             {msgLoading ? (
-              [1, 2, 3, 4, 5].map(() => {
-                return <MessageSkeleton />;
+              [1, 2, 3, 4, 5].map((e) => {
+                return <MessageSkeleton key={e} />;
               })
             ) : msgflag ? (
               <InfiniteScroll
@@ -545,10 +543,7 @@ const Home = () => {
                     disabled={!msgflag}
                     hidden
                   />
-                  {/* <button className="" onClick={sendMessage}>
-                  +
-                </button> */}
-                  <label for="actual-btn">
+                  <label htmlFor="actual-btn">
                     <div className="my-5 p-1 bg-[#2d2d47]  rounded-full hover:text-blue-500 transition-all cursor-pointer duration-300 ease-in-out">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -570,7 +565,6 @@ const Home = () => {
                 <input
                   type="text"
                   value={currentMessage}
-                  // placeholder="Hey..."
                   onChange={(event) => {
                     setCurrentMessage(event.target.value);
                   }}
@@ -592,6 +586,7 @@ const Home = () => {
             </form>
           </div>
         </div>
+        {/* Modals */}
         <Modal
           showModal={showModal}
           closeModal={closeModal}

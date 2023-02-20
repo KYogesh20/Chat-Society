@@ -2,8 +2,6 @@ import axios from "axios";
 import React, { useRef } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
-import { auth } from "../../firebase-config";
-import { updateProfile } from "firebase/auth";
 const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const Updateuser = ({ showModal, closeModal }) => {
@@ -43,16 +41,6 @@ const Updateuser = ({ showModal, closeModal }) => {
           Name: name,
           api_secret: import.meta.env.VITE_APP_API_SECRET,
         });
-        // // update user in firebase
-        // updateProfile(auth.currentUser, {
-        //   displayName: name,
-        // })
-        //   .then(() => {
-        //     console.log("Profile updated!");
-        //   })
-        //   .catch((e) => {
-        //     console.log(e.message);
-        //   });
         closeModal();
         toast.update(id, {
           render: "Username updated successfully!",
