@@ -196,7 +196,6 @@ const Login = () => {
               Login
             </button>
             <ToastContainer />
-            {/* <button className="outline-none">Signup</button> */}
           </div>
           <div className="w-full flex items-center">
             <p className="w-[40%] h-[1px] bg-gray-400"></p>

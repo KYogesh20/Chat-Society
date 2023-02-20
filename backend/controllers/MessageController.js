@@ -1,25 +1,18 @@
 const prisma = require("../prisma/index");
 exports.sendMsg = async (messageData) => {
   try {
-    if (messageData.api_secret !== process.env.API_SECRET) {
-      res.status(401);
-      res.send("Unauthorized!");
-    } else {
-      console.log(
-        `author : ${messageData.author} | message : ${messageData.message} | channelId: ${messageData.channelId} | authorId: ${messageData.authorId}`
-      );
-      // const { message, channelId, author } = req.body;
-      const result = await prisma.message.create({
-        data: {
-          message: messageData.message,
-          author: messageData.author,
-          authorId: messageData.authorId,
-          channelName: { connect: { id: messageData.channelId } },
-          type: messageData.type,
-        },
-      });
-      res.json(result);
-    }
+    console.log(
+      `author : ${messageData.author} | message : ${messageData.message} | channelId: ${messageData.channelId} | authorId: ${messageData.authorId}`
+    );
+    const result = await prisma.message.create({
+      data: {
+        message: messageData.message,
+        author: messageData.author,
+        authorId: messageData.authorId,
+        channelName: { connect: { id: messageData.channelId } },
+        type: messageData.type,
+      },
+    });
   } catch (error) {
     console.log(error);
   }
