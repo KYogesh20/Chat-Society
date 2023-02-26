@@ -27,7 +27,10 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
     if (serverInfo.serverId) {
       setIsLoading(true);
       showChannels();
-      setMsgflag(true);
+      channelId && setMsgflag(true);
+    } else {
+      setIsLoading(true);
+      showChannels();
     }
   }, [serverInfo]);
   useEffect(() => {
