@@ -24,8 +24,11 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
   let serverId = serverInfo.serverId;
   let { channelId } = useParams();
   useEffect(() => {
-    setIsLoading(true);
-    showChannels();
+    if (serverInfo.serverId) {
+      setIsLoading(true);
+      showChannels();
+      setMsgflag(true);
+    }
   }, [serverInfo]);
   useEffect(() => {
     setIsLoading(true);
@@ -93,8 +96,8 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
       </div>
       <div className="flex flex-col space-y-2 mt-3 overflow-y-scroll scrollbar-hide w-full">
         {isLoading && serverId ? (
-          [1, 2, 3].map(() => {
-            return <ChannelSkeleton />;
+          [1, 2, 3].map((e) => {
+            return <ChannelSkeleton key={e} />;
           })
         ) : channels.length === 0 ? (
           <div className="w-full text-gray-400 text-center flex flex-col justify-center items-center p-3 bg-gray-700/40 rounded-lg">
