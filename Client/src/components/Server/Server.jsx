@@ -170,7 +170,7 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
                         api_secret: import.meta.env.VITE_APP_API_SECRET,
                       });
                     }}
-                    className="ml-2 text-red-600 text-lg"
+                    className="ml-auto text-red-600/90 text-lg mr-2"
                   />
                 ) : null}
               </div>
