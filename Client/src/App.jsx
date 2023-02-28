@@ -19,6 +19,7 @@ function App() {
     serverName: null,
     serverId: null,
     serverCode: null,
+    serverOwnerId: null,
   });
   const [userInfo, setUserInfo] = useState({
     userName: null,

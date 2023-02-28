@@ -19,7 +19,9 @@ exports.createChannel = async (req, res, next) => {
     const { serverId, channelName, ownerId, api_secret } = req.body;
     if (api_secret !== process.env.API_SECRET) {
       res.status(401);
-      res.send("Unauthorized!");
+      res.json({
+        message: "Unauthorised access",
+      });
     } else {
       const result = await prisma.channel.create({
         data: {
@@ -35,5 +37,29 @@ exports.createChannel = async (req, res, next) => {
     }
   } catch (error) {
     res.json(error.message);
+  }
+};
+
+exports.deleteChannel = async (req, res, next) => {
+  try {
+    const { channelName, channelId, api_secret } = req.body;
+    if (api_secret === process.env.API_SECRET) {
+      const result = await prisma.channel.delete({
+        where: {
+          id: channelId,
+        },
+      });
+      res.json({
+        msg: "Your channel got deleted successfully!",
+        result,
+      });
+    } else {
+      res.status(401);
+      res.json({
+        message: "Unauthorised access",
+      });
+    }
+  } catch (e) {
+    console.log(e);
   }
 };

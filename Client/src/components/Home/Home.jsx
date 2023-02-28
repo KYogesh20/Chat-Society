@@ -215,10 +215,11 @@ const Home = () => {
     }
   };
 
-  const setServer = (serverid, servername, servercode) => {
+  const setServer = (serverid, servername, servercode, ownerId) => {
     setServerInfo({
       serverName: servername,
       serverId: serverid,
+      serverOwnerId: ownerId,
       serverCode: servercode,
     });
     setMsgflag(false);
@@ -346,7 +347,12 @@ const Home = () => {
                         ind === 0 ? "mt-2" : null
                       }`}
                       onClick={() =>
-                        setServer(server.id, server.Name, server.Code)
+                        setServer(
+                          server.id,
+                          server.Name,
+                          server.Code,
+                          server.ownerId
+                        )
                       }
                       onMouseOver={() => showTippy(ind, server?.Name)}
                       id={"s" + ind}

@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
+const prisma = require("./prisma/index");
 
 var app = express();
 
@@ -70,10 +71,11 @@ app.use(function (err, req, res, next) {
 });
 
 // const deleteData = async () => {
+//   await prisma.user.deleteMany({});
 //   // await prisma.message.deleteMany({});
 //   // await prisma.server.deleteMany({});
 //   // await prisma.channel.deleteMany({});
-//   // console.log("Deleted!");
+//   console.log("Deleted!");
 // };
 // deleteData();
 server.listen(process.env.PORT || 5000);

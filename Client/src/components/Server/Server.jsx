@@ -8,21 +8,39 @@ import axios from "axios";
 import "../Home/Home.css";
 import tippy from "tippy.js";
 import Modal from "../Modal/Modal";
+import DeleteChannelModal from "../Modal/DeleteChannelModal";
 import { BiSad } from "react-icons/bi";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/scale-extreme.css";
 import ChannelSkeleton from "../Skeletons/ChannelSkeleton";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
   const navigate = useNavigate();
   const [channels, setChannels] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
+
+  // delete channel states :dorime:
+  const [showDeleteChannelModal, setShowDeleteChannelModal] = useState(false);
+  const [channelData, setChannelData] = useState({});
+
   const { serverInfo } = useContext(ServerContext);
+
   const { channelInfo, setChannelInfo } = useContext(ChannelContext);
+  const [hoveredElement, setHoveredElement] = useState(null);
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
   let serverId = serverInfo.serverId;
   let { channelId } = useParams();
+
+  useEffect(() => {
+    setTimeout(() => {
+      const u = JSON.parse(localStorage.getItem("userInfo")).userId;
+      setUserId(u);
+    }, 500);
+  }, []);
+
   useEffect(() => {
     if (serverInfo.serverId) {
       setIsLoading(true);
@@ -37,6 +55,9 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
     setIsLoading(true);
     showChannels();
   }, [showModal]);
+  useEffect(() => {
+    showChannels();
+  }, [showDeleteChannelModal]);
   useEffect(() => {
     setChannelInfo({
       ...channelInfo,
@@ -74,6 +95,11 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
   const closeModal = () => {
     setShowModal(false);
   };
+  const deleteChannel = (data) => {
+    setChannelData(data);
+    setShowDeleteChannelModal(true);
+  };
+  const closeDeleteChannelModal = () => setShowDeleteChannelModal(false);
   return (
     <div className="channels p-2 border-2 border-transparent rounded-tl-2xl h-full">
       <div className="text-center border-b-2 border-[#26263d] mt-2 flex justify-between p-3">
@@ -111,27 +137,55 @@ const Server = ({ serverName, setMsgflag, setMsgLoading }) => {
             </p>
           </div>
         ) : (
-          channels?.map((channel) => {
+          channels?.map((channel, idx) => {
             return (
               <div
                 key={channel.id}
+                onMouseEnter={() => setHoveredElement(idx)}
+                onMouseLeave={() => setHoveredElement(null)}
                 onClick={() =>
                   setChannel(channel.id, channel.serverId, channel.channelName)
                 }
-                className={`flex items-center  cursor-pointer p-2 transition-all ease-in-out rounded-md ${
+                className={`flex items-center hover:bg-[#24283b] cursor-pointer p-2 transition-all ease-in-out rounded-md ${
                   channelInfo.channelId === channel.id
-                    ? " bg-slate-700/80"
+                    ? " bg-[#343b58]"
                     : "text-gray-300"
                 }`}
               >
                 <HiOutlineChatAlt2 size={"1.1rem"} className="ml-1" />
+
                 <p className="ml-2">{channel.channelName}</p>
+                {hoveredElement === idx &&
+                (userId === channel.ownerId ||
+                  userId === serverInfo.serverOwnerId) ? (
+                  <RiDeleteBin6Line
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      deleteChannel({
+                        channelName: channel.channelName,
+                        channelId: channel.id,
+                        currChannelId: channelInfo.channelId,
+                        serverId,
+                        api_secret: import.meta.env.VITE_APP_API_SECRET,
+                      });
+                    }}
+                    className="ml-2 text-red-600 text-lg"
+                  />
+                ) : null}
               </div>
             );
           })
         )}
       </div>
       <Modal showModal={showModal} variant="Room" closeModal={closeModal} />
+      <DeleteChannelModal
+        showDeleteChannelModal={showDeleteChannelModal}
+        data={channelData}
+        setChannelInfo={setChannelInfo}
+        setMsgFlag={setMsgflag}
+        closeDeleteChannelModal={closeDeleteChannelModal}
+      />
     </div>
   );
 };

@@ -28,6 +28,7 @@ exports.addServer = async (req, res, next) => {
         Name,
         id: result.id,
         Code: result.Code,
+        ownerId,
       };
       const ok = await prisma.user.update({
         where: {
@@ -67,6 +68,7 @@ exports.joinServer = async (req, res, next) => {
         let d = {
           Name: servers[0].Name,
           id: servers[0].id,
+          ownerId: servers[0].ownerId,
           Code,
         };
         try {
