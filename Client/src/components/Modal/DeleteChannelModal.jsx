@@ -53,7 +53,7 @@ const DeleteChannelModal = ({
           <div className="flex justify-between items-center w-full px-5 py-2">
             <p className="font-semibold text-xl text-slate-300 flex justify-center items-center">
               <CiWarning className="text-red-500 text-3xl mr-3" /> Do you want
-              to delete this channel?
+              to delete this room?
             </p>
             <AiOutlineCloseCircle
               size={"1.5rem"}
