@@ -334,7 +334,7 @@ const Home = () => {
   };
   return (
     <>
-      <div className="container h-screen scrollbar-hide">
+      <div className="container1 h-[97vh] scrollbar-hide">
         <div className="p-3 border border-gray-600  flex flex-col justify-center items-center h-full">
           <img src={brand_image} alt="chat-society" className="w-14 h-14" />
           <div className="flex  items-center flex-col overflow-y-scroll scrollbar-hide h-[70vh] my-3">
@@ -518,7 +518,7 @@ const Home = () => {
               </div>
             )}
           </div>
-          <div className="chat-footer text-lg flex-grow flex-row">
+          <div className="chat-footer my-auto text-lg flex-grow flex-row">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -550,7 +550,7 @@ const Home = () => {
                     hidden
                   />
                   <label htmlFor="actual-btn">
-                    <div className="my-5 p-1 bg-[#2d2d47]  rounded-full hover:text-blue-500 transition-all cursor-pointer duration-300 ease-in-out">
+                    <div className="mt-auto p-2 bg-[#2d2d47]  rounded-full hover:text-blue-500 transition-all cursor-pointer duration-300 ease-in-out">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5"
@@ -585,7 +585,7 @@ const Home = () => {
                       ? "Message #" + channelInfo.channelName
                       : "Select a channel"
                   }
-                  className="send-message m-auto mx-2 w-full h-1/2 rounded-lg py-2 px-3 bg-[#2d2d47] outline-none"
+                  className="send-message mt-auto mx-2 w-full h-1/2 rounded-lg py-2 px-3 bg-[#2d2d47] outline-none"
                 />
                 <input type="submit" hidden={true} />
               </div>
