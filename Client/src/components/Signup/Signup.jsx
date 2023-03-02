@@ -61,17 +61,7 @@ const Signup = () => {
   };
   const submitForm = async (e) => {
     e.preventDefault();
-    // const data = {
-    //   username: username,
-    //   password: password,
-    //   email: email,
-    // };
-    // axios
-    //   .post("http://localhost:5000/login", data)
-    //   .then(() => console.log(`data passed successfully!!!`))
-    //   .catch((err) => {
-    //     console.error(err);
-    //   });
+
     const id = toast.loading("Signing Up..");
     const { username, email, password, password2 } = userDetails;
     if (password !== password2) {
@@ -84,8 +74,6 @@ const Signup = () => {
       });
     }
     try {
-      // console.log("trying user auth");
-
       const user = await createUserWithEmailAndPassword(auth, email, password);
 
       const res = await axios.post(backendURL + "/userapi/adduser", {
@@ -114,16 +102,23 @@ const Signup = () => {
         channelId: null,
         channelName: null,
       });
-      toast.update(id, {
-        render: "Login successfull",
-        type: "success",
-        isLoading: false,
-        theme: "dark",
-        autoClose: 3000,
-        closeOnClick: true,
-      });
-      setIsAuthenticated(true);
-      navigate("/dashboard");
+      // Waiting until userInfo gets stored
+      const myInterval = setInterval(() => {
+        let u = JSON.parse(localStorage.getItem("userInfo"));
+        if (u) {
+          toast.update(id, {
+            render: "Login successfull",
+            type: "success",
+            isLoading: false,
+            theme: "dark",
+            autoClose: 3000,
+            closeOnClick: true,
+          });
+          setIsAuthenticated(true);
+          clearInterval(myInterval);
+          navigate("/dashboard");
+        }
+      }, 500);
     } catch (error) {
       toast.update(id, {
         render: "Some error occured",
