@@ -36,9 +36,10 @@ const Signup = () => {
     "bg-slate-800",
   ];
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [localAuthFlag, setLocalAuthFlag] = useState(false);
 
   onAuthStateChanged(auth, (currUser) => {
-    if (currUser) {
+    if (currUser && localAuthFlag) {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
@@ -74,19 +75,13 @@ const Signup = () => {
       });
     }
     try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
-
       const res = await axios.post(backendURL + "/userapi/adduser", {
         Email: email,
         Name: username,
         api_secret: import.meta.env.VITE_APP_API_SECRET,
       });
-      let userInfo = {
-        userName: username,
-        userId: res.data?.id,
-      };
-      // preserve the userInfo state
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+      const user = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(auth.currentUser, {
         displayName: username,
         // photoURL:
@@ -104,8 +99,13 @@ const Signup = () => {
       });
       // Waiting until userInfo gets stored
       const myInterval = setInterval(() => {
-        let u = JSON.parse(localStorage.getItem("userInfo"));
-        if (u) {
+        if (res?.data) {
+          let userInfo = {
+            userName: username,
+            userId: res.data?.id,
+          };
+          // preserve the userInfo state
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
           toast.update(id, {
             render: "Login successfull",
             type: "success",
@@ -114,13 +114,11 @@ const Signup = () => {
             autoClose: 3000,
             closeOnClick: true,
           });
-          console.log("Interval is cleared!");
-          console.log(u);
+          setLocalAuthFlag(true);
           setIsAuthenticated(true);
           clearInterval(myInterval);
-          navigate("/dashboard");
         }
-      }, 500);
+      }, 300);
     } catch (error) {
       toast.update(id, {
         render: "Some error occured",
@@ -151,12 +149,7 @@ const Signup = () => {
         Name: userDetail.user.displayName,
         api_secret: import.meta.env.VITE_APP_API_SECRET,
       });
-      let userInfo = {
-        userName: res.data?.Name,
-        userId: res.data?.id,
-      };
-      // preserve the userInfo state
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
       setServerInfo({
         serverName: null,
         serverId: null,
@@ -166,9 +159,15 @@ const Signup = () => {
         channelId: null,
         channelName: null,
       });
+      // Keep checking until we get a response from backend!
       const myInterval = setInterval(() => {
-        let u = JSON.parse(localStorage.getItem("userInfo"));
-        if (u) {
+        if (res?.data) {
+          let userInfo = {
+            userName: res.data?.Name,
+            userId: res.data?.id,
+          };
+          // preserve the userInfo state
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
           toast.update(id, {
             render: "Login successfull",
             type: "success",
@@ -177,13 +176,11 @@ const Signup = () => {
             autoClose: 3000,
             closeOnClick: true,
           });
-          console.log("Interval is cleared!");
-          console.log(u);
           clearInterval(myInterval);
+          setLocalAuthFlag(true);
           setIsAuthenticated(true);
-          navigate("/dashboard");
         }
-      }, 500);
+      }, 300);
     } catch (error) {
       toast.update(id, {
         render: "Some error occured",
