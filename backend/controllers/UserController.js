@@ -4,7 +4,7 @@ exports.addUser = async (req, res, next) => {
     const { Email, Name, api_secret } = req.body;
     if (api_secret !== process.env.API_SECRET) {
       res.status(401);
-      res.send("Unauthorized!");
+      res.json({ msg: "UnAuthorized!" });
     } else {
       const uniqueUser = await prisma.user.findMany({
         where: {

@@ -46,15 +46,6 @@ const Login = () => {
       navigate("/dashboard");
     }
   });
-  useEffect(() => {
-    let u = JSON.parse(localStorage.getItem("userInfo"));
-    if (u) {
-      console.log("User Is Authenticated!");
-      navigate("/dashboard");
-    } else {
-      console.log("User Unauthenticated!");
-    }
-  });
   const itemEvent = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -82,16 +73,15 @@ const Login = () => {
         Name: user.user.displayName,
         api_secret: import.meta.env.VITE_APP_API_SECRET,
       });
-      let userInfo = {
-        userName: res.data?.Name,
-        userId: res.data?.id,
-      };
-      // preserve the userInfo state
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
 
       const myInterval = setInterval(() => {
-        let u = JSON.parse(localStorage.getItem("userInfo"));
-        if (u) {
+        if (res?.data) {
+          let userInfo = {
+            userName: res.data?.Name,
+            userId: res.data?.id,
+          };
+          // preserve the userInfo state
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
           toast.update(id, {
             render: "Login successful",
             type: "success",
@@ -99,13 +89,10 @@ const Login = () => {
             autoClose: 2000,
             closeOnClick: true,
           });
-          console.log("Interval is cleared!");
-          console.log(u);
           clearInterval(myInterval);
           setIsAuthenticated(true);
-          navigate("/dashboard");
         }
-      }, 500);
+      }, 300);
     } catch (error) {
       toast.update(id, {
         render: "Invalid email or password..",
@@ -133,12 +120,7 @@ const Login = () => {
         Name: userDetail.user.displayName,
         api_secret: import.meta.env.VITE_APP_API_SECRET,
       });
-      let userInfo = {
-        userName: res.data?.Name,
-        userId: res.data?.id,
-      };
-      // preserve the userInfo state
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
       setServerInfo({
         serverName: null,
         serverId: null,
@@ -153,8 +135,13 @@ const Login = () => {
       //     "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
       // });
       const myInterval = setInterval(() => {
-        let u = JSON.parse(localStorage.getItem("userInfo"));
-        if (u) {
+        if (res?.data) {
+          let userInfo = {
+            userName: res.data?.Name,
+            userId: res.data?.id,
+          };
+          // preserve the userInfo state
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
           toast.update(id, {
             render: "Login successful",
             type: "success",
@@ -162,13 +149,10 @@ const Login = () => {
             autoClose: 2000,
             closeOnClick: true,
           });
-          console.log("Interval is cleared!");
-          console.log(u);
           clearInterval(myInterval);
           setIsAuthenticated(true);
-          navigate("/dashboard");
         }
-      }, 500);
+      }, 300);
     } catch (error) {
       toast.update(id, {
         render: "Some error occured!",
