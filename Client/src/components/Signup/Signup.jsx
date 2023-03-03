@@ -164,16 +164,22 @@ const Signup = () => {
         channelId: null,
         channelName: null,
       });
-      toast.update(id, {
-        render: "Login successfull",
-        type: "success",
-        isLoading: false,
-        theme: "dark",
-        autoClose: 3000,
-        closeOnClick: true,
-      });
-      setIsAuthenticated(true);
-      navigate("/dashboard");
+      const myInterval = setInterval(() => {
+        let u = JSON.parse(localStorage.getItem("userInfo"));
+        if (u) {
+          toast.update(id, {
+            render: "Login successfull",
+            type: "success",
+            isLoading: false,
+            theme: "dark",
+            autoClose: 3000,
+            closeOnClick: true,
+          });
+          clearInterval(myInterval);
+          setIsAuthenticated(true);
+          navigate("/dashboard");
+        }
+      }, 500);
     } catch (error) {
       toast.update(id, {
         render: "Some error occured",
