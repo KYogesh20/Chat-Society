@@ -114,6 +114,8 @@ const Signup = () => {
             autoClose: 3000,
             closeOnClick: true,
           });
+          console.log("Interval is cleared!");
+          console.log(u);
           setIsAuthenticated(true);
           clearInterval(myInterval);
           navigate("/dashboard");
@@ -164,16 +166,24 @@ const Signup = () => {
         channelId: null,
         channelName: null,
       });
-      toast.update(id, {
-        render: "Login successfull",
-        type: "success",
-        isLoading: false,
-        theme: "dark",
-        autoClose: 3000,
-        closeOnClick: true,
-      });
-      setIsAuthenticated(true);
-      navigate("/dashboard");
+      const myInterval = setInterval(() => {
+        let u = JSON.parse(localStorage.getItem("userInfo"));
+        if (u) {
+          toast.update(id, {
+            render: "Login successfull",
+            type: "success",
+            isLoading: false,
+            theme: "dark",
+            autoClose: 3000,
+            closeOnClick: true,
+          });
+          console.log("Interval is cleared!");
+          console.log(u);
+          clearInterval(myInterval);
+          setIsAuthenticated(true);
+          navigate("/dashboard");
+        }
+      }, 500);
     } catch (error) {
       toast.update(id, {
         render: "Some error occured",

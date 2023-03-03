@@ -46,6 +46,15 @@ const Login = () => {
       navigate("/dashboard");
     }
   });
+  useEffect(() => {
+    let u = JSON.parse(localStorage.getItem("userInfo"));
+    if (u) {
+      console.log("User Is Authenticated!");
+      navigate("/dashboard");
+    } else {
+      console.log("User Unauthenticated!");
+    }
+  });
   const itemEvent = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -90,7 +99,10 @@ const Login = () => {
             autoClose: 2000,
             closeOnClick: true,
           });
+          console.log("Interval is cleared!");
+          console.log(u);
           clearInterval(myInterval);
+          setIsAuthenticated(true);
           navigate("/dashboard");
         }
       }, 500);
@@ -140,15 +152,23 @@ const Login = () => {
       //   photoURL:
       //     "https://source.boringavatars.com/beam/60?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
       // });
-      toast.update(id, {
-        render: "Login successful",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
-        closeOnClick: true,
-      });
-      setIsAuthenticated(true);
-      navigate("/dashboard");
+      const myInterval = setInterval(() => {
+        let u = JSON.parse(localStorage.getItem("userInfo"));
+        if (u) {
+          toast.update(id, {
+            render: "Login successful",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+            closeOnClick: true,
+          });
+          console.log("Interval is cleared!");
+          console.log(u);
+          clearInterval(myInterval);
+          setIsAuthenticated(true);
+          navigate("/dashboard");
+        }
+      }, 500);
     } catch (error) {
       toast.update(id, {
         render: "Some error occured!",
