@@ -49,7 +49,10 @@ const Login = () => {
   useEffect(() => {
     let u = JSON.parse(localStorage.getItem("userInfo"));
     if (u) {
+      console.log("User Is Authenticated!");
       navigate("/dashboard");
+    } else {
+      console.log("User Unauthenticated!");
     }
   });
   const itemEvent = (event) => {
@@ -96,6 +99,8 @@ const Login = () => {
             autoClose: 2000,
             closeOnClick: true,
           });
+          console.log("Interval is cleared!");
+          console.log(u);
           clearInterval(myInterval);
           setIsAuthenticated(true);
           navigate("/dashboard");
@@ -157,6 +162,8 @@ const Login = () => {
             autoClose: 2000,
             closeOnClick: true,
           });
+          console.log("Interval is cleared!");
+          console.log(u);
           clearInterval(myInterval);
           setIsAuthenticated(true);
           navigate("/dashboard");

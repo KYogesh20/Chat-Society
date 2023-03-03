@@ -114,6 +114,8 @@ const Signup = () => {
             autoClose: 3000,
             closeOnClick: true,
           });
+          console.log("Interval is cleared!");
+          console.log(u);
           setIsAuthenticated(true);
           clearInterval(myInterval);
           navigate("/dashboard");
@@ -175,6 +177,8 @@ const Signup = () => {
             autoClose: 3000,
             closeOnClick: true,
           });
+          console.log("Interval is cleared!");
+          console.log(u);
           clearInterval(myInterval);
           setIsAuthenticated(true);
           navigate("/dashboard");
