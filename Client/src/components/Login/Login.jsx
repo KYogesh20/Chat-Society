@@ -22,6 +22,7 @@ const Login = () => {
   const { setServerInfo } = useContext(ServerContext);
   const { setChannelInfo } = useContext(ChannelContext);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [localAuthFlag, setLocalAuthFlag] = useState(false);
   const [userDetails, setUserDetails] = useState({
     email: "",
     password: "",
@@ -35,7 +36,7 @@ const Login = () => {
     "bg-slate-800",
   ];
   onAuthStateChanged(auth, (currUser) => {
-    if (currUser) {
+    if (currUser && localAuthFlag) {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
@@ -91,6 +92,7 @@ const Login = () => {
           });
           clearInterval(myInterval);
           setIsAuthenticated(true);
+          setLocalAuthFlag(true);
         }
       }, 300);
     } catch (error) {
@@ -151,6 +153,7 @@ const Login = () => {
           });
           clearInterval(myInterval);
           setIsAuthenticated(true);
+          setLocalAuthFlag(true);
         }
       }, 300);
     } catch (error) {
