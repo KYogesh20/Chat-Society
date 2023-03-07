@@ -492,7 +492,7 @@ const Home = () => {
                             </div>
                           </div>
                           {messageData.type === "text" ? (
-                            <div className="message">
+                            <div className="message overflow-hidden break-all">
                               {messageData?.message}
                             </div>
                           ) : (
