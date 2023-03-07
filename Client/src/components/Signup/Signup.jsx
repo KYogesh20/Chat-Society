@@ -46,6 +46,13 @@ const Signup = () => {
     }
   });
   useEffect(() => {
+    let u = JSON.parse(localStorage.getItem("userInfo"));
+    if (u && u.userId && u.userName) {
+      setIsAuthenticated(true);
+      setLocalAuthFlag(true);
+    }
+  }, []);
+  useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard");
     }
