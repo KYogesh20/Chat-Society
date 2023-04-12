@@ -70,78 +70,83 @@ const Signup = () => {
   const submitForm = async (e) => {
     e.preventDefault();
 
-    const id = toast.loading("Signing Up..");
     const { username, email, password, password2 } = userDetails;
     if (password !== password2) {
       toast.error("Passwords are not matching", {
         position: "top-right",
         theme: "dark",
         closeOnClick: true,
-        autoClose: 3000,
+        autoClose: 2000,
         progress: true,
       });
-    }
-    try {
-      const res = await axios.post(backendURL + "/userapi/adduser", {
-        Email: email,
-        Name: username,
-        api_secret: import.meta.env.VITE_APP_API_SECRET,
-      });
+    } else {
+      const id = toast.loading("Signing Up..");
+      try {
+        const res = await axios.post(backendURL + "/userapi/adduser", {
+          Email: email,
+          Name: username,
+          api_secret: import.meta.env.VITE_APP_API_SECRET,
+        });
 
-      const user = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(auth.currentUser, {
-        displayName: username,
-        // photoURL:
-        //   auth.currentUser.photoURL ||
-        //   colors[Math.floor(Math.random() * array.length)],
-      });
-      setServerInfo({
-        serverName: null,
-        serverId: null,
-        serverCode: null,
-      });
-      setChannelInfo({
-        channelId: null,
-        channelName: null,
-      });
-      // Waiting until userInfo gets stored
-      const myInterval = setInterval(() => {
-        if (res?.data) {
-          let userInfo = {
-            userName: username,
-            userId: res.data?.id,
-          };
-          // preserve the userInfo state
-          localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          toast.update(id, {
-            render: "Login successfull",
-            type: "success",
-            isLoading: false,
-            theme: "dark",
-            autoClose: 3000,
-            closeOnClick: true,
-          });
-          setLocalAuthFlag(true);
-          setIsAuthenticated(true);
-          clearInterval(myInterval);
-        }
-      }, 300);
-    } catch (error) {
-      toast.update(id, {
-        render: "Some error occured",
-        type: "error",
-        isLoading: false,
-        theme: "dark",
-        autoClose: 3000,
-        closeOnClick: true,
-      });
-      setUserDetails({
-        username: "",
-        email: "",
-        password: "",
-        password2: "",
-      });
-      console.log(error.message);
+        const user = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        await updateProfile(auth.currentUser, {
+          displayName: username,
+          // photoURL:
+          //   auth.currentUser.photoURL ||
+          //   colors[Math.floor(Math.random() * array.length)],
+        });
+        setServerInfo({
+          serverName: null,
+          serverId: null,
+          serverCode: null,
+        });
+        setChannelInfo({
+          channelId: null,
+          channelName: null,
+        });
+        // Waiting until userInfo gets stored
+        const myInterval = setInterval(() => {
+          if (res?.data) {
+            let userInfo = {
+              userName: username,
+              userId: res.data?.id,
+            };
+            // preserve the userInfo state
+            localStorage.setItem("userInfo", JSON.stringify(userInfo));
+            toast.update(id, {
+              render: "Login successfull",
+              type: "success",
+              isLoading: false,
+              theme: "dark",
+              autoClose: 3000,
+              closeOnClick: true,
+            });
+            setLocalAuthFlag(true);
+            setIsAuthenticated(true);
+            clearInterval(myInterval);
+          }
+        }, 300);
+      } catch (error) {
+        toast.update(id, {
+          render: "Some error occured",
+          type: "error",
+          isLoading: false,
+          theme: "dark",
+          autoClose: 3000,
+          closeOnClick: true,
+        });
+        setUserDetails({
+          username: "",
+          email: "",
+          password: "",
+          password2: "",
+        });
+        console.log(error.message);
+      }
     }
   };
 
